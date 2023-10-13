@@ -1,0 +1,10 @@
+.video {
+  &::before {
+    content: '';
+    pointer-events: none;
+
+    display: block;
+
+    padding-bottom: calc(100% / var(--aspect-ratio));
+  }
+}
