@@ -17,4 +17,5 @@ DefaultInput.args = {
 export const DisabledInput = Template.bind({});
 DisabledInput.args = {
   disabled: true,
+  placeholder: "Text",
 };
