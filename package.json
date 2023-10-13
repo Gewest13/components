@@ -9,7 +9,7 @@
     "dist"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/MidoAhmed"
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "rimraf dist && rollup -c",
@@ -40,7 +40,6 @@
   ],
   "homepage": "https://github.com/Gewest13/components",
   "peerDependencies": {
-    "]": "^5.4.0",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
