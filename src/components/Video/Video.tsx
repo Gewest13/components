@@ -169,11 +169,11 @@ export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVid
 
     const prefixes = ['', 'moz', 'webkit', 'ms'];
 
-    prefixes.forEach((prefix) => document.addEventListener(`${prefix}fullscreenchange`, () => handleCloseFullScreen(fullVideoRef.current)));
+    prefixes.forEach((prefix) => document.addEventListener(`${prefix}fullscreenchange`, () => exitFullScreen(fullVideoRef.current)));
   }, [])
 
   return (
-    <Tag onClick={!disableFullScreenHandling ? () => handleFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
+    <Tag onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
       <Video {...fullVideoAttributes} ref={fullVideoRef} ratio={[0, 0]} src={videoSource} />
       <VideoComponent {...rest} />
       {children}
