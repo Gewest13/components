@@ -13,6 +13,7 @@
 }
 
 .image {
+  aspect-ratio: var(--aspect-ratio);
   position: absolute;
   inset: 0;
   object-fit: cover;
