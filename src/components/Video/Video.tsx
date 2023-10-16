@@ -19,14 +19,13 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<
   const cssRatioVar = { "--aspect-ratio": `${ratio ? ratio[0] / ratio[1] : 1}` } as React.CSSProperties;
 
   return (
-    <div style={cssRatioVar} className={style.videoWrap}>
+    <div style={cssRatioVar} className={`${className || ' '} ${style.videoWrap}`}>
       <video 
         autoPlay
         loop
         muted
         playsInline
-        className={`${className || ''} ${style.video}`} 
-        
+        className={style.video} 
         src={src.mediaItemUrl} 
         ref={ref} 
         {...rest} 
