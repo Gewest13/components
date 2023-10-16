@@ -1,17 +1,14 @@
 import React from 'react'
+import { IFileComponent } from '../../interface';
 
-export interface IImage {
-  /** Aspect ratio for desktop view (width, height) */
-  ratio: [number, number];
-  /** Image src for different device types */
-  // src: TFile;
-  label: string
+export interface IImage extends IFileComponent {
+  priority?: boolean;
 }
 
 export const Image = (props: IImage) => {
-  const { label } = props
+  const { src, margins, ratios } = props
 
   return (
-    <div>{label}</div>
+    <div>Image</div>
   )
 }

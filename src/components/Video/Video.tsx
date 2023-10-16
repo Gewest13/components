@@ -1,6 +1,8 @@
 /* eslint-disable react/display-name */
 import React, { forwardRef,  useEffect, useRef } from 'react'
 import style from './Video.module.scss'
+import {  cssMarginVars } from '../../functions/Margins';
+import { IFileComponent, Margins } from '../../interface';
 
 export interface TFile {
   mediaItemUrl: string
@@ -11,15 +13,16 @@ export interface IVideo {
   ratio: [number, number];
   src: TFile;
   className?: string;
+  margins?: Margins;
 }
 
 export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<HTMLVideoElement>>((props, ref) => {
-  const { ratio, src, className, ...rest } = props
+  const { ratio, src, className, margins, ...rest } = props
 
   const cssRatioVar = { "--aspect-ratio": `${ratio ? ratio[0] / ratio[1] : 1}` } as React.CSSProperties;
 
   return (
-    <div style={cssRatioVar} className={`${className || ' '} ${style.videoWrap}`}>
+    <div data-margin style={{...cssRatioVar, ...cssMarginVars(margins)}} className={`${className || ' '} ${style.videoWrap}`}>
       <video 
         autoPlay
         loop
@@ -29,38 +32,15 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<
         src={src.mediaItemUrl} 
         ref={ref} 
         {...rest} 
-        />
-      </div>
+      />
+    </div>
   )
 })
 
-export interface VideoSource {
-  /** URL of the video source for desktop devices */
-  desktop: TFile;
-  /** URL of the video source for tablet devices */
-  tablet?: TFile;
-  /** URL of the video source for mobile devices */
-  mobile?: TFile;
-}
 
-export interface VideoRatios {
-  /** Aspect ratio for desktop view (width, height) */
-  desktop: [number, number];
-  /** Aspect ratio for tablet view (width, height) */
-  tablet?: [number, number];
-  /** Aspect ratio for mobile view (width, height) */
-  mobile?: [number, number];
-}
 
-export interface IVideoComponent {
-  /** Video src for different device types */
-  src: VideoSource;
-  /** Aspect ratios for different device types */
-  ratios: VideoRatios;
-}
-
-export const VideoComponent = forwardRef<HTMLDivElement, IVideoComponent & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { ratios, src, ...rest } = props
+export const VideoComponent = forwardRef<HTMLDivElement, { videoAttributes?: React.HTMLAttributes<HTMLVideoElement> } & IFileComponent & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+  const { ratios, src, margins, videoAttributes, ...rest } = props
 
   let addedClassNames = '';
 
@@ -77,15 +57,15 @@ export const VideoComponent = forwardRef<HTMLDivElement, IVideoComponent & React
   }
 
   return (
-    <div ref={ref} { ...rest}>
+    <div data-margin style={cssMarginVars(margins)} ref={ref} { ...rest}>
       {src.mobile && ratios.mobile && (
-        <Video className={addedClassNames + " mobile"} src={src.mobile} ratio={ratios.mobile}  />
+        <Video data-viewport={`mobile ${addedClassNames}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
       )}
       {src.tablet && ratios.tablet && (
-        <Video className={addedClassNames + " tablet"} src={src.tablet} ratio={ratios.tablet}  />
+        <Video data-viewport={`tablet ${addedClassNames}`} src={src.tablet} ratio={ratios.tablet} {...videoAttributes}  />
       )}
       {src.desktop && ratios.desktop && (
-        <Video className={addedClassNames + " desktop"} src={src.desktop} ratio={ratios.desktop}  />
+        <Video data-viewport={`desktop ${addedClassNames}`} src={src.desktop} ratio={ratios.desktop} {...videoAttributes}  />
       )}
     </div>
   )
@@ -141,7 +121,7 @@ export const exitFullScreen = (element: HTMLVideoElement) => {
 }
 
 
-interface IFullVideo extends IVideoComponent {
+interface IFullVideo extends IFileComponent {
   /** Source for the full video */
   videoSource: TFile;
 
