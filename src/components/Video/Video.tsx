@@ -2,12 +2,12 @@
 import React, { forwardRef,  useEffect, useRef } from 'react'
 import style from './Video.module.scss'
 
-interface TFile {
+export interface TFile {
   mediaItemUrl: string
   altText?: string
 }
 
-interface IVideo {
+export interface IVideo {
   ratio: [number, number];
   src: TFile;
   className?: string;
@@ -33,7 +33,7 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<
   )
 })
 
-interface IVideoComponent {
+export interface IVideoComponent {
   /** Optional mobile src */
   srcMobile?: TFile
   /** Optional tablet src */

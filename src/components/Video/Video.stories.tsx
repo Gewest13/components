@@ -1,23 +1,21 @@
 import { ComponentStory } from "@storybook/react";
 import React from "react";
-import Button from "./Button";
+import {Video} from "./Video";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "ReactComponentLibrary/Button",
-  component: Button,
+  title: "ReactComponentLibrary/Video",
+  component: Video,
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Button> = (args) => <Button {...args} />;
+const Template: ComponentStory<typeof Video> = (args) => <Video {...args} />;
 
-export const HelloWorld = Template.bind({});
+export const VideoComponent = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-HelloWorld.args = {
-  label: "Saveeee",
-};
-
-export const ClickMe = Template.bind({});
-ClickMe.args = {
-  label: "Click me!",
+VideoComponent.args = {
+  ratio: [100, 100],
+  src: {
+    mediaItemUrl: 'https://lucis.gwst13.com/wp-content/uploads/2023/09/HTCE-Sequence-02_4.mp4'
+  }
 };
