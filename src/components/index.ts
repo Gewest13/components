@@ -1,3 +1,3 @@
 export { default as Button } from "./Button";
 export { default as Input } from "./Input";
-export { Video, VideoComponent, FullVideo, handleCloseFullScreen, handleFullScreen } from "./Video/Video";
+export { Video, VideoComponent, FullVideo, enterFullScreen, exitFullScreen } from "./Video/Video";

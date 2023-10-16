@@ -126,14 +126,14 @@ const isFullScreen = () => {
   );
 };
 
-export const handleFullScreen = (element: HTMLVideoElement) => {
+export const enterFullScreen = (element: HTMLVideoElement) => {
   if (!element) return;
 
   requestFullScreen(element);
   element.play();
 }
 
-export const handleCloseFullScreen = (element: HTMLVideoElement) => {
+export const exitFullScreen = (element: HTMLVideoElement) => {
   if (!element) return;
 
   if (!isFullScreen()) {
