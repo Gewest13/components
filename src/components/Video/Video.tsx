@@ -19,63 +19,74 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<
   const cssRatioVar = { "--aspect-ratio": `${ratio ? ratio[0] / ratio[1] : 1}` } as React.CSSProperties;
 
   return (
-    <video 
-      autoPlay
-      loop
-      muted
-      playsInline
-      className={`${className || ''} ${style.video}`} 
-      style={cssRatioVar} 
-      src={src.mediaItemUrl} 
-      ref={ref} 
-      {...rest} 
-    />
+    <div style={cssRatioVar} className={style.videoWrap}>
+      <video 
+        autoPlay
+        loop
+        muted
+        playsInline
+        className={`${className || ''} ${style.video}`} 
+        
+        src={src.mediaItemUrl} 
+        ref={ref} 
+        {...rest} 
+        />
+      </div>
   )
 })
 
-export interface IVideoComponent {
-  /** Optional mobile src */
-  srcMobile?: TFile
-  /** Optional tablet src */
-  srcTablet?: TFile
-  /** Optional desktop src */
-  srcDesktop?: TFile
-  /** desktopRatio: [width, height]. */
-  desktopRatio: [number, number];
-  /** tabletRatio: [width, height]. */
-  tabletRatio?: [number, number];
-  /** mobileRatio: [width, height]. */
-  mobileRatio?: [number, number];
+export interface VideoSource {
+  /** URL of the video source for desktop devices */
+  desktop: TFile;
+  /** URL of the video source for tablet devices */
+  tablet?: TFile;
+  /** URL of the video source for mobile devices */
+  mobile?: TFile;
 }
 
+export interface VideoRatios {
+  /** Aspect ratio for desktop view (width, height) */
+  desktop: [number, number];
+  /** Aspect ratio for tablet view (width, height) */
+  tablet?: [number, number];
+  /** Aspect ratio for mobile view (width, height) */
+  mobile?: [number, number];
+}
+
+export interface IVideoComponent {
+  /** Video src for different device types */
+  src: VideoSource;
+  /** Aspect ratios for different device types */
+  ratios: VideoRatios;
+}
 
 export const VideoComponent = forwardRef<HTMLDivElement, IVideoComponent & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { srcMobile, srcTablet, srcDesktop, desktopRatio, tabletRatio, mobileRatio, ...rest } = props
+  const { ratios, src, ...rest } = props
 
   let addedClassNames = '';
 
-  if (!srcMobile) {
+  if (!src.mobile) {
     addedClassNames += ' mobile';
   }
 
-  if (!srcTablet) {
+  if (!src.tablet) {
     addedClassNames += ' tablet';
   }
 
-  if (!srcDesktop) {
+  if (!src.desktop) {
     addedClassNames += ' desktop';
   }
 
   return (
     <div ref={ref} { ...rest}>
-      {srcMobile && mobileRatio && (
-        <Video className={addedClassNames + " mobile"} src={srcMobile} ratio={mobileRatio}  />
+      {src.mobile && ratios.mobile && (
+        <Video className={addedClassNames + " mobile"} src={src.mobile} ratio={ratios.mobile}  />
       )}
-      {srcTablet && tabletRatio && (
-        <Video className={addedClassNames + " tablet"} src={srcTablet} ratio={tabletRatio}  />
+      {src.tablet && ratios.tablet && (
+        <Video className={addedClassNames + " tablet"} src={src.tablet} ratio={ratios.tablet}  />
       )}
-      {srcDesktop && desktopRatio && (
-        <Video className={addedClassNames + " desktop"} src={srcDesktop} ratio={desktopRatio}  />
+      {src.desktop && ratios.desktop && (
+        <Video className={addedClassNames + " desktop"} src={src.desktop} ratio={ratios.desktop}  />
       )}
     </div>
   )
@@ -130,22 +141,31 @@ export const handleCloseFullScreen = (element: HTMLVideoElement) => {
   }
 }
 
-interface IFullVideo extends IVideo {
-  propsFullVideo: React.HTMLAttributes<HTMLVideoElement>
-  fullVideoSrc: TFile
-  disableFullScreenHandler?: boolean
-  children?: React.ReactNode
+
+interface IFullVideo extends IVideoComponent {
+  /** Source for the full video */
+  videoSource: TFile;
+
+  /** Indicates whether the full-screen handling is disabled */
+  disableFullScreenHandling?: boolean;
+
+  /** Child elements to be rendered within the full video component */
+  children?: React.ReactNode;
+
+  /** Additional HTML attributes for the full video element */
+  fullVideoAttributes: React.HTMLAttributes<HTMLVideoElement>
 }
 
+
 export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVideo>((props, ref) => {
-  const { disableFullScreenHandler, propsFullVideo, fullVideoSrc, children, ...rest } = props
+  const { disableFullScreenHandling, fullVideoAttributes, videoSource, children, ...rest } = props
   
   const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
 
-  const Tag = disableFullScreenHandler ? 'div' : 'button'
+  const Tag = disableFullScreenHandling ? 'div' : 'button'
 
   useEffect(() => {
-    if (disableFullScreenHandler) return;
+    if (disableFullScreenHandling) return;
 
     const prefixes = ['', 'moz', 'webkit', 'ms'];
 
@@ -153,9 +173,9 @@ export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVid
   }, [])
 
   return (
-    <Tag onClick={!disableFullScreenHandler ? () => handleFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
-      <Video {...propsFullVideo} ref={fullVideoRef} ratio={[0, 0]} src={fullVideoSrc} />
-      <Video {...rest} />
+    <Tag onClick={!disableFullScreenHandling ? () => handleFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
+      <Video {...fullVideoAttributes} ref={fullVideoRef} ratio={[0, 0]} src={videoSource} />
+      <VideoComponent {...rest} />
       {children}
     </Tag>
   )
