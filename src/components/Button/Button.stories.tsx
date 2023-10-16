@@ -4,7 +4,7 @@ import Button from "./Button";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "ReactComponentLibrary/Button",
+  title: "Components/Button",
   component: Button,
 };
 

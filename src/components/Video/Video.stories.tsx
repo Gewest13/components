@@ -4,7 +4,7 @@ import {Video} from "./Video";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "ReactComponentLibrary/Video",
+  title: "Components/Video",
   component: Video,
 };
 

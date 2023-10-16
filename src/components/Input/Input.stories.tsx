@@ -3,7 +3,7 @@ import React from "react";
 import Input from "./Input";
 
 export default {
-  title: "ReactComponentLibrary/Input",
+  title: "Components/Input",
   component: Input,
 } as ComponentMeta<typeof Input>;
 
