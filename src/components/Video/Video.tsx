@@ -1,13 +1,9 @@
 /* eslint-disable react/display-name */
 import React, { forwardRef,  useEffect, useRef } from 'react'
 import style from './Video.module.scss'
-import {  cssMarginVars } from '../../functions/Margins';
-import { IFileComponent, Margins } from '../../interface';
-
-export interface TFile {
-  mediaItemUrl: string
-  altText?: string
-}
+import { cssMarginVars } from '../../functions/Margins';
+import { cssRatioVar } from '../../functions/Ratio';
+import { IFileComponent, Margins, TFile } from '../../interface';
 
 export interface IVideo {
   ratio: [number, number];
@@ -19,10 +15,8 @@ export interface IVideo {
 export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<HTMLVideoElement>>((props, ref) => {
   const { ratio, src, className, margins, ...rest } = props
 
-  const cssRatioVar = { "--aspect-ratio": `${ratio ? ratio[0] / ratio[1] : 1}` } as React.CSSProperties;
-
   return (
-    <div data-margin style={{...cssRatioVar, ...cssMarginVars(margins)}} className={`${className || ' '} ${style.videoWrap}`}>
+    <div data-margin style={{...cssRatioVar(ratio), ...cssMarginVars(margins)}} className={`${className || ' '} ${style.videoWrap}`}>
       <video 
         autoPlay
         loop

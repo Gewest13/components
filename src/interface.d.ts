@@ -1,3 +1,8 @@
+export interface TFile {
+  mediaItemUrl: string
+  altText?: string
+}
+
 export interface Margins {
   /** Margin for mobile devices */
   mobile?: [string, string, string, string];
