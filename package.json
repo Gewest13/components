@@ -1,6 +1,6 @@
 {
   "name": "@gewest13/components",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "Template and quick-starter to create modern React libraries using Rollup.",
   "main": "dist/cjs/bundle.js",
   "module": "dist/esm/bundle.js",
@@ -31,13 +31,6 @@
   },
   "author": "gewest13",
   "license": "MIT",
-  "keywords": [
-    "react-template",
-    "react-library",
-    "typescript",
-    "react",
-    "template"
-  ],
   "homepage": "https://github.com/Gewest13/components",
   "peerDependencies": {
     "next": "^13.5.4",

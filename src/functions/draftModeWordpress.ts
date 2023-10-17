@@ -9,16 +9,11 @@ export type FetchWordpress = {
 };
 
 export const fetchWordpress = async ({ api_url, query, variables, token }: FetchWordpress) => {
-  const startDate = new Date().getTime();
-
   const response = await fetch(api_url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify({ query, variables }),
   });
-
-  const endDate = new Date().getTime();
-  console.log('Execution time', `${endDate - startDate}ms`);
 
   const json = await response.json();
 
