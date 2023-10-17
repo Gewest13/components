@@ -1,8 +1,8 @@
 /* eslint-disable react/display-name */
 import React, { forwardRef,  useEffect, useRef } from 'react'
 import style from './Video.module.scss'
-import { cssMarginVars } from '../../functions/Margins';
-import { cssRatioVar } from '../../functions/Ratio';
+import { cssMarginVars } from '../../functions/margins';
+import { cssRatioVar } from '../../functions/ratio';
 import { IFileComponent, Margins, TFile } from '../../interface';
 
 export interface IVideo {

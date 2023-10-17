@@ -2,8 +2,8 @@
 import React, { forwardRef } from 'react'
 import { IFileComponent } from '../../interface';
 import NextImage from 'next/image';
-import { cssMarginVars } from '../../functions/Margins';
-import { cssRatioVar } from '../../functions/Ratio';
+import { cssMarginVars } from '../../functions/margins';
+import { cssRatioVar } from '../../functions/ratio';
 
 import styles from './Image.module.scss';
 
