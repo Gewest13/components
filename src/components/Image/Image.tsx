@@ -11,7 +11,7 @@ export interface IImage extends IFileComponent {
   priority?: boolean;
 }
 
-export const Image = forwardRef<HTMLDivElement, IImage>((props, ref) => {
+export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { src, margins, ratios, priority, ...rest } = props
 
   return (
