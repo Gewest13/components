@@ -5,11 +5,11 @@ export interface TFile {
 
 export interface Margins {
   /** Margin for mobile devices */
-  mobile?: [string, string, string, string];
+  mobile?: [number, number, number, number];
   /** Margin for tablet devices */
-  tablet?: [string, string, string, string];
+  tablet?: [number, number, number, number];
   /** Margin for desktop devices */
-  desktop?: [string, string, string, string];
+  desktop?: [number, number, number, number];
 }
 
 export interface FileSource {
