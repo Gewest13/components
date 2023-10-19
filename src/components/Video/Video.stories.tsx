@@ -16,9 +16,9 @@ export const SingleVideo = TemplateSingleVideo.bind({});
 SingleVideo.args = {
   ratio: [100, 100],
   margins: {
-    mobile: ['10px', '10px', '20px', '20px'],
-    tablet: ['10px', '10px', '20px', '20px'],
-    desktop: ['10px', '10px', '20px', '20px']
+    mobile: [10, 10, 20, 20],
+    tablet: [10, 10, 20, 20],
+    desktop: [10, 10, 20, 20]
   },
   src: {
     mediaItemUrl: 'https://lucis.gwst13.com/wp-content/uploads/2023/09/HTCE-Sequence-02_4.mp4'
