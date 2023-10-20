@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable react/display-name */
 import React, { forwardRef } from 'react'
 import { IFileComponent } from '../../interface';
@@ -39,5 +41,3 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
     </div>
   )
 })
-
-export default Image;
