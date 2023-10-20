@@ -12,7 +12,12 @@ import pkg from "./package.json" assert { type: 'json' };
 
 export default [
 	{
-		input: ['src/components/**/*.tsx', 'src/functions/**/*.ts'],
+		input: {
+			// invite everyone!
+			include: ['src/components/**/*.tsx', 'src/functions/**/*.ts'],
+			// except for the joker
+			exclude: ['src/components/**/*.stories.tsx'],
+		},
 		output: [
 			{
 				file: pkg.main,
