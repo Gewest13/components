@@ -1,6 +1,6 @@
 {
   "name": "@gewest13/components",
-  "version": "1.2.11",
+  "version": "1.2.13",
   "description": "Template and quick-starter to create modern React libraries using Rollup.",
   "main": "dist/cjs/bundle.js",
   "module": "dist/esm/bundle.js",
