@@ -39,3 +39,5 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
     </div>
   )
 })
+
+export default Image;
