@@ -17,42 +17,40 @@ export default [
 	{
 		input: 'src/index.ts',
 		output: [
-			{
-				// exports: 'named',
-				// preserveModules: true,
-				// file: pkg.main,
-				preserveModules: true,
-				dir: 'dist/cjs', // Use 'dir' instead of 'file'
-				format: 'cjs',
-				sourcemap: true,
-			},
+			// {
+			// 	// exports: 'named',
+			// 	// preserveModules: true,
+			// 	// file: pkg.main,
+			// 	preserveModules: true,
+			// 	dir: 'dist/cjs', // Use 'dir' instead of 'file'
+			// 	format: 'cjs',
+			// 	// sourcemap: true,
+			// },
 			{
 				// exports: 'named',
 				// preserveModules: true,
 				// file: pkg.module,
 				preserveModules: true,
-				dir: 'dist/esm', // Use 'dir' instead of 'file'
+				dir: 'dist', // Use 'dir' instead of 'file'
 				format: "esm",
-				sourcemap: true,
+				// sourcemap: true,
 			},
 		],
 		plugins: [
 			typescript({tsconfig: "./tsconfig.json", rootDir: "src" }),
-			multi(),
+			multi({	entryFileName: 'index.js' }),
 			peerDepsExternal(),
 			resolve(),
 			postcss({ modules: true }),
 			preserveDirectives(),
-			terser({
-				compress: { directives: false },
-			}),
+			terser(),
 			commonjs(),
 		]
 	},
-	{
-		input: "dist/esm/types/index.d.ts",
-		output: [{ file: "dist/index.d.ts", format: "esm" }],
-		plugins: [dts()],
-		external: [/\.(css|less|scss)$/],
-	},
+	// {
+	// 	input: "dist/esm/types/index.d.ts",
+	// 	output: [{ file: "dist/index.d.ts", format: "esm" }],
+	// 	plugins: [dts()],
+	// 	external: [/\.(css|less|scss)$/],
+	// },
 ];
