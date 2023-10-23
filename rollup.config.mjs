@@ -46,10 +46,10 @@ export default [
 			commonjs(),
 		]
 	},
-	// {
-	// 	input: "dist/esm/types/index.d.ts",
-	// 	output: [{ file: "dist/index.d.ts", format: "esm" }],
-	// 	plugins: [dts()],
-	// 	external: [/\.(css|less|scss)$/],
-	// },
+	{
+		input: "dist/index.d.ts",
+		output: [{ file: "dist/index.d.ts", format: "esm" }],
+		plugins: [dts()],
+		external: [/\.(css|less|scss)$/],
+	},
 ];
