@@ -15,28 +15,13 @@ import pkg from "./package.json" assert { type: 'json' };
 export default [
 	{
 		input: 'src/index.ts',
-		output: [
-			// {
-			// 	// exports: 'named',
-			// 	// preserveModules: true,
-			// 	// file: pkg.main,
-			// 	preserveModules: true,
-			// 	dir: 'dist/cjs', // Use 'dir' instead of 'file'
-			// 	format: 'cjs',
-			// 	// sourcemap: true,
-			// },
-			{
-				// exports: 'named',
-				// preserveModules: true,
-				// file: pkg.module,
-				preserveModules: true,
-				dir: 'dist', // Use 'dir' instead of 'file'
-				format: "esm",
-				// sourcemap: true,
-			},
-		],
+		output: [{
+			preserveModules: true,
+			dir: 'dist',
+			format: "esm",
+		}],
 		plugins: [
-			typescript({tsconfig: "./tsconfig.json", rootDir: "src" }),
+			typescript({ tsconfig: "./tsconfig.json", rootDir: "src" }),
 			multi({	entryFileName: 'index.js' }),
 			peerDepsExternal(),
 			resolve(),
