@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 import defaultData from '../../config';
-// import path from 'path';
 
-// const rootConfigPath = path.join(__dirname, 'config.js');
-
-let config;
+let config: any;
 
 try {
   config = require('config');
@@ -15,4 +12,4 @@ try {
   config = defaultData;
 }
 
-export default config as any;
+export const getConfig = config;

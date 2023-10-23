@@ -1,4 +1,4 @@
-import getConfig from './getConfig';
+import { getConfig } from './getConfig';
 
 export const desktopvw = (size: number) => {
   return `calc((100vw / var(--vwsizes-desktop)) * ${size})`
