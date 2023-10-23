@@ -22,10 +22,10 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<
         loop
         muted
         playsInline
-        className={style.video} 
+        className={style.video}
         src={src.mediaItemUrl} 
         ref={ref} 
-        {...rest} 
+        {...rest}
       />
     </div>
   )
