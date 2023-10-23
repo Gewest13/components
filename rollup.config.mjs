@@ -10,8 +10,6 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import multi from '@rollup/plugin-multi-entry';
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 
-import pkg from "./package.json" assert { type: 'json' };
-
 export default [
 	{
 		input: 'src/index.ts',
