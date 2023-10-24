@@ -51,9 +51,13 @@ MultiScreenVideo.args = {
 const TemplateFullVideo: StoryFn<typeof FullVideo> = (args) => {
   const ref = useRef<ImperativeFullVideoRef>(null);
   
-  useEffect(() => {
-    console.log(ref.current)
-  }, [])
+  // useEffect(() => {
+  //   console.log(ref.current)
+
+  //   setTimeout(() => {
+  //     ref.current?.playFullScreen()
+  //   }, 4000)
+  // }, [])
 
 return (
   <FullVideo ref={ref} style={{width: '100px', height: '100px'}} {...args} />

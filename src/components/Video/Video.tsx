@@ -163,12 +163,12 @@ export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, 
   useImperativeHandle(ref, () => {
     return {
       playFullScreen: () => {
-        if (disableFullScreenHandling) return;
+        if (!disableFullScreenHandling) return;
 
         enterFullScreen(fullVideoRef.current);
       },
       pauseFullScreen: () => {
-        if (disableFullScreenHandling) return;
+        if (!disableFullScreenHandling) return;
 
         exitFullScreen(fullVideoRef.current);
       },
