@@ -34,8 +34,8 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & HTMLAttributes<HTMLVi
 
 
 
-export const VideoComponent = forwardRef<HTMLDivElement, { videoAttributes?: React.HTMLAttributes<HTMLVideoElement> } & IFileComponent & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { ratios, src, margins, videoAttributes, ...rest } = props
+export const VideoComponent = forwardRef<HTMLDivElement, { children?: any, videoAttributes?: React.HTMLAttributes<HTMLVideoElement> } & IFileComponent & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+  const { ratios, src, margins, videoAttributes, children, ...rest } = props
 
   let addedClassNames = '';
 
@@ -53,6 +53,7 @@ export const VideoComponent = forwardRef<HTMLDivElement, { videoAttributes?: Rea
 
   return (
     <div data-margin style={cssMarginVars(margins)} ref={ref} { ...rest}>
+      {children && children}
       {src.mobile && ratios.mobile && (
         <Video data-viewport={`mobile ${addedClassNames}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
       )}
@@ -118,7 +119,7 @@ export const exitFullScreen = (element: HTMLVideoElement) => {
 
 interface IFullVideo extends IFileComponent {
   /** Source for the full video */
-  videoSource: TFile;
+  srcFull: TFile;
 
   /** Indicates whether the full-screen handling is disabled */
   disableFullScreenHandling?: boolean;
@@ -132,7 +133,7 @@ interface IFullVideo extends IFileComponent {
 
 
 export const FullVideo = forwardRef<HTMLVideoElement, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { disableFullScreenHandling, fullVideoAttributes, videoSource, className, children, ...rest } = props
+  const { disableFullScreenHandling, fullVideoAttributes, srcFull, className, children, ...rest } = props
   
   const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
 
@@ -148,9 +149,10 @@ export const FullVideo = forwardRef<HTMLVideoElement, IFullVideo & React.HTMLAtt
 
   return (
     <Tag className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
-      {/* @ts-ignore someone fix this */}
-      <Video className={styles.fullVideo} controls={true} ref={fullVideoRef} ratio={[0, 0]} src={videoSource} {...fullVideoAttributes} />
-      <VideoComponent {...rest} />
+      <VideoComponent {...rest} >
+        {/* @ts-ignore */}
+        <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+      </VideoComponent>
       {children}
     </Tag>
   )

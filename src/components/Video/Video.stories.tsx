@@ -1,6 +1,6 @@
 import { StoryFn } from "@storybook/react";
 import React from "react";
-import { Video, VideoComponent } from "./Video";
+import { Video, VideoComponent, FullVideo } from "./Video";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -44,6 +44,24 @@ MultiScreenVideo.args = {
   ratios: {
     mobile: [100, 100],
     tablet: [100, 100],
+    desktop: [100, 100]
+  }
+}
+
+const TemplateFullVideo: StoryFn<typeof FullVideo> = (args) => <FullVideo style={{width: '100px', height: '100px'}} {...args} />;
+
+export const FullScreenVideo: any = TemplateFullVideo.bind({});
+
+FullScreenVideo.args = {
+  src: {
+    desktop: {
+      mediaItemUrl: 'https://lucis.gwst13.com/wp-content/uploads/2023/09/HTCE-Sequence-02_4.mp4'
+    }
+  },
+  srcFull: {
+    mediaItemUrl: 'https://lucis.gwst13.com/wp-content/uploads/2023/09/HTCE-Sequence-02_4.mp4'
+  },
+  ratios: {
     desktop: [100, 100]
   }
 }
