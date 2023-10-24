@@ -51,7 +51,6 @@ export default function Swiper(data: ISwiper) {
     ticker: 0,
     stopTicker: true,
     offsetSlides: [] as number[],
-    onY: 0,
     percentage: 0,
     currentSnappedIndex: 0,
   }), []);
@@ -166,7 +165,6 @@ export default function Swiper(data: ISwiper) {
   const handleMouseDown = (e: React.MouseEvent) => {
     state.isDragging = true;
     state.onX = e.clientX;
-    state.onY = e.clientY;
   };
 
   // Handle mouse up event
