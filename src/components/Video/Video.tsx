@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react/display-name */
 import React, { HTMLAttributes, forwardRef,  useEffect, useRef } from 'react'
-import style from './Video.module.scss'
+import styles from './Video.module.scss'
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
 import { IFileComponent, Margins, TFile } from '../../interface';
@@ -17,13 +17,13 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & HTMLAttributes<HTMLVi
   const { ratio, src, className, margins, ...rest } = props
 
   return (
-    <div data-margin style={{...cssRatioVar(ratio), ...cssMarginVars(margins)}} className={`${className || ' '} ${style.videoWrap}`}>
+    <div data-margin style={{...cssRatioVar(ratio), ...cssMarginVars(margins)}} className={`${className || ' '} ${styles.videoWrap}`}>
       <video 
         autoPlay
         loop
         muted
         playsInline
-        className={style.video}
+        className={styles.video}
         src={src.mediaItemUrl} 
         ref={ref} 
         {...rest}
