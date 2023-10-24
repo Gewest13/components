@@ -32,6 +32,8 @@ export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
   );
 });
 
+Video.displayName = 'Video';
+
 interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   videoAttributes?: React.HTMLAttributes<HTMLVideoElement>;
@@ -69,6 +71,8 @@ export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps>((p
     </div>
   );
 });
+
+VideoComponent.displayName = 'VideoComponent';
 interface CustomDocument extends Document {
   webkitIsFullScreen?: boolean;
   mozFullScreen?: boolean;
@@ -184,3 +188,5 @@ export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo & React.H
     </Tag>
   );
 });
+
+FullVideo.displayName = 'FullVideo';
