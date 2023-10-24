@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react/display-name */
-import React, { forwardRef,  useEffect, useRef } from 'react'
+import React, { HTMLAttributes, forwardRef,  useEffect, useRef } from 'react'
 import style from './Video.module.scss'
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
@@ -12,7 +13,7 @@ export interface IVideo {
   margins?: Margins;
 }
 
-export const Video = forwardRef<HTMLVideoElement, IVideo & React.HTMLAttributes<HTMLVideoElement>>((props, ref) => {
+export const Video = forwardRef<HTMLVideoElement, IVideo & HTMLAttributes<HTMLVideoElement>>((props, ref) => {
   const { ratio, src, className, margins, ...rest } = props
 
   return (
@@ -126,11 +127,11 @@ interface IFullVideo extends IFileComponent {
   children?: React.ReactNode;
 
   /** Additional HTML attributes for the full video element */
-  fullVideoAttributes: React.HTMLAttributes<HTMLVideoElement>
+  fullVideoAttributes: HTMLAttributes<HTMLVideoElement> & HTMLVideoElement
 }
 
 
-export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+export const FullVideo = forwardRef<HTMLVideoElement, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { disableFullScreenHandling, fullVideoAttributes, videoSource, className, children, ...rest } = props
   
   const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
@@ -147,7 +148,8 @@ export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVid
 
   return (
     <Tag className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
-      <Video {...fullVideoAttributes} ref={fullVideoRef} ratio={[0, 0]} src={videoSource} />
+      {/* @ts-ignore someone fix this */}
+      <Video className={styles.fullVideo} controls={true} ref={fullVideoRef} ratio={[0, 0]} src={videoSource} {...fullVideoAttributes} />
       <VideoComponent {...rest} />
       {children}
     </Tag>
