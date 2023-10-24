@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react/display-name */
-import React, { HTMLAttributes, forwardRef,  useCallback,  useEffect, useRef } from 'react'
+import React, { HTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import styles from './Video.module.scss'
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
@@ -128,42 +128,56 @@ interface IFullVideo extends IFileComponent {
   children?: React.ReactNode;
 
   /** Additional HTML attributes for the full video element */
-  fullVideoAttributes: HTMLAttributes<HTMLVideoElement> & HTMLVideoElement
+  fullVideoAttributes: HTMLAttributes<HTMLVideoElement>
 }
 
+type ImperativeFullVideoRef = {
+  playFullScreen: () => void;
+  pauseFullScreen: () => void;
+}
 
-export const FullVideo = forwardRef<HTMLVideoElement, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { disableFullScreenHandling, fullVideoAttributes, srcFull, className, children, ...rest } = props
-  
+export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+  const { disableFullScreenHandling, fullVideoAttributes, srcFull, className, children, ...rest } = props;
+
   const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
-
-  const Tag = disableFullScreenHandling ? 'div' : 'button'
+  const containerRef = useRef() as React.MutableRefObject<HTMLDivElement>;
 
   useEffect(() => {
     if (disableFullScreenHandling) return;
 
     const prefixes = ['', 'moz', 'webkit', 'ms'];
 
-    prefixes.forEach((prefix) => document.addEventListener(`${prefix}fullscreenchange`, () => exitFullScreen(fullVideoRef.current)));
-  }, [])
+    prefixes.forEach((prefix) =>
+      document.addEventListener(`${prefix}fullscreenchange`, () => exitFullScreen(fullVideoRef.current))
+    );
+  }, []);
 
-  const setRefs = useCallback((node: any) => {
-    fullVideoRef.current = node;
+  useImperativeHandle(ref, () => {
+    return {
+      playFullScreen: () => {
+        if (disableFullScreenHandling) return;
 
-    if (typeof ref === 'function') {
-      ref(node);
-    } else if (ref) {
-      ref.current = node;
-    }
-  }, [])
+        enterFullScreen(fullVideoRef.current);
+      },
+      pauseFullScreen: () => {
+        if (disableFullScreenHandling) return;
+
+        exitFullScreen(fullVideoRef.current);
+      },
+      containerRef: containerRef.current,
+      fullVideoRef: fullVideoRef.current,
+    };
+  }, [disableFullScreenHandling]);
+
+  const Tag = disableFullScreenHandling ? 'div' : 'button' as any;
 
   return (
-    <Tag className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null}>
+    <Tag ref={containerRef} className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null}>
       <VideoComponent {...rest} >
         {/* @ts-ignore */}
-        <Video className={styles.fullVideo} controls={true} preload="none" ref={setRefs} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+        <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
       </VideoComponent>
       {children}
     </Tag>
-  )
-})
+  );
+});
