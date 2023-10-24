@@ -130,8 +130,8 @@ interface IFullVideo extends IFileComponent {
 }
 
 
-export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVideo>((props, ref) => {
-  const { disableFullScreenHandling, fullVideoAttributes, videoSource, children, ...rest } = props
+export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+  const { disableFullScreenHandling, fullVideoAttributes, videoSource, className, children, ...rest } = props
   
   const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
 
@@ -146,7 +146,7 @@ export const FullVideo = forwardRef<HTMLDivElement | HTMLButtonElement, IFullVid
   }, [])
 
   return (
-    <Tag onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
+    <Tag className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
       <Video {...fullVideoAttributes} ref={fullVideoRef} ratio={[0, 0]} src={videoSource} />
       <VideoComponent {...rest} />
       {children}
