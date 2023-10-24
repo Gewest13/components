@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { ComponentMeta, StoryFn } from "@storybook/react";
 import React from "react";
 import Input from "./Input";
 
@@ -7,7 +7,7 @@ export default {
   component: Input,
 } as ComponentMeta<typeof Input>;
 
-const Template: ComponentStory<typeof Input> = (args) => <Input {...args} />;
+const Template: StoryFn<typeof Input> = (args) => <Input {...args} />;
 
 export const DefaultInput = Template.bind({});
 DefaultInput.args = {

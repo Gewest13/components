@@ -1,4 +1,4 @@
-import { ComponentStory } from "@storybook/react";
+import { StoryFn } from "@storybook/react";
 import React from "react";
 import { Video, VideoComponent } from "./Video";
 
@@ -9,7 +9,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const TemplateSingleVideo: ComponentStory<typeof Video> = (args) => <Video {...args} />;
+const TemplateSingleVideo: StoryFn<typeof Video> = (args) => <Video {...args} />;
 
 export const SingleVideo = TemplateSingleVideo.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
@@ -25,7 +25,7 @@ SingleVideo.args = {
   }
 };
 
-const TemplateMultiScreenVideo: ComponentStory<typeof VideoComponent> = (args) => <VideoComponent {...args} />;
+const TemplateMultiScreenVideo: StoryFn<typeof VideoComponent> = (args) => <VideoComponent {...args} />;
 
 export const MultiScreenVideo = TemplateMultiScreenVideo.bind({});
 

@@ -1,4 +1,4 @@
-import { ComponentStory } from "@storybook/react";
+import { StoryFn } from "@storybook/react";
 import React from "react";
 import { Image } from "./Image";
 
@@ -10,7 +10,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Image> = (args) => <Image {...args} />;
+const Template: StoryFn<typeof Image> = (args) => <Image {...args} />;
 
 export const ImageComponent = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args

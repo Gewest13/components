@@ -1,0 +1,40 @@
+.swiper {
+  display: flex;
+  flex-wrap: nowrap;
+
+  width: fit-content;
+
+  cursor: grab;
+
+  &.active {
+    cursor: grabbing;
+
+    a {
+      pointer-events: none;
+    }
+  }
+
+  @media (hover: none) {
+    transform: none !important;
+  }
+}
+
+.container {
+  @media (hover: none) {
+    overflow: scroll scroll;
+    scroll-snap-type: x mandatory;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.card {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+
+  img {
+    pointer-events: none;
+  }
+}

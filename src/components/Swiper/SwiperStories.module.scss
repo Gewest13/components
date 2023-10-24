@@ -1,0 +1,12 @@
+.swiper {
+  > * {
+    column-gap: 24px;
+  }
+}
+
+.slide {
+  width: 720px;
+  height: 480px;
+
+  background: red;
+}
