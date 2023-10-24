@@ -1,20 +1,20 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable react/display-name */
 import React, { HTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import styles from './Video.module.scss'
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
 import { IFileComponent, Margins, TFile } from '../../interface';
 
-export interface IVideo {
+export interface IVideoProps extends HTMLAttributes<HTMLVideoElement> {
   ratio: [number, number];
   src: TFile;
   className?: string;
   margins?: Margins;
+  controls?: boolean;
+  preload?: "none" | "metadata" | "auto";
 }
 
-export const Video = forwardRef<HTMLVideoElement, IVideo & HTMLAttributes<HTMLVideoElement>>((props, ref) => {
-  const { ratio, src, className, margins, ...rest } = props
+export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
+  const { ratio, src, className, margins, ...rest } = props;
 
   return (
     <div data-margin={!!margins} style={{...cssRatioVar(ratio), ...cssMarginVars(margins)}} className={`${className || ' '} ${styles.videoWrap}`}>
@@ -29,13 +29,16 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & HTMLAttributes<HTMLVi
         {...rest}
       />
     </div>
-  )
-})
+  );
+});
 
+interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTMLDivElement> {
+  children?: React.ReactNode;
+  videoAttributes?: React.HTMLAttributes<HTMLVideoElement>;
+}
 
-
-export const VideoComponent = forwardRef<HTMLDivElement, { children?: any, videoAttributes?: React.HTMLAttributes<HTMLVideoElement> } & IFileComponent & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { ratios, src, margins, videoAttributes, children, ...rest } = props
+export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps>((props, ref) => {
+  const { ratios, src, margins, videoAttributes, children, ...rest } = props;
 
   let addedClassNames = '';
 
@@ -64,9 +67,8 @@ export const VideoComponent = forwardRef<HTMLDivElement, { children?: any, video
         <Video data-viewport={`desktop ${addedClassNames}`} src={src.desktop} ratio={ratios.desktop} {...videoAttributes}  />
       )}
     </div>
-  )
-})
-
+  );
+});
 interface CustomDocument extends Document {
   webkitIsFullScreen?: boolean;
   mozFullScreen?: boolean;
@@ -134,6 +136,8 @@ interface IFullVideo extends IFileComponent {
 type ImperativeFullVideoRef = {
   playFullScreen: () => void;
   pauseFullScreen: () => void;
+  containerRef: HTMLDivElement;
+  fullVideoRef: HTMLVideoElement;
 }
 
 export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
@@ -174,7 +178,6 @@ export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo & React.H
   return (
     <Tag ref={containerRef} className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null}>
       <VideoComponent {...rest} >
-        {/* @ts-ignore */}
         <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
       </VideoComponent>
       {children}
