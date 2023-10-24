@@ -34,7 +34,7 @@ export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
 
 Video.displayName = 'Video';
 
-interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTMLDivElement> {
+export interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   videoAttributes?: React.HTMLAttributes<HTMLVideoElement>;
 }
@@ -123,7 +123,7 @@ export const exitFullScreen = (element: HTMLVideoElement) => {
 }
 
 
-interface IFullVideo extends IFileComponent {
+export interface IFullVideo extends IFileComponent, React.HTMLAttributes<HTMLDivElement> {
   /** Source for the full video */
   srcFull: TFile;
 
@@ -137,14 +137,14 @@ interface IFullVideo extends IFileComponent {
   fullVideoAttributes: HTMLAttributes<HTMLVideoElement>
 }
 
-type ImperativeFullVideoRef = {
+export type ImperativeFullVideoRef = {
   playFullScreen: () => void;
   pauseFullScreen: () => void;
   containerRef: HTMLDivElement;
   fullVideoRef: HTMLVideoElement;
 }
 
-export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, ref) => {
   const { disableFullScreenHandling, fullVideoAttributes, srcFull, className, children, ...rest } = props;
 
   const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
