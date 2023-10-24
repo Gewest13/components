@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react/display-name */
-import React, { HTMLAttributes, forwardRef,  useEffect, useRef } from 'react'
+import React, { HTMLAttributes, forwardRef,  useCallback,  useEffect, useRef } from 'react'
 import styles from './Video.module.scss'
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
@@ -17,7 +17,7 @@ export const Video = forwardRef<HTMLVideoElement, IVideo & HTMLAttributes<HTMLVi
   const { ratio, src, className, margins, ...rest } = props
 
   return (
-    <div data-margin style={{...cssRatioVar(ratio), ...cssMarginVars(margins)}} className={`${className || ' '} ${styles.videoWrap}`}>
+    <div data-margin={!!margins} style={{...cssRatioVar(ratio), ...cssMarginVars(margins)}} className={`${className || ' '} ${styles.videoWrap}`}>
       <video 
         autoPlay
         loop
@@ -52,7 +52,7 @@ export const VideoComponent = forwardRef<HTMLDivElement, { children?: any, video
   }
 
   return (
-    <div data-margin style={cssMarginVars(margins)} ref={ref} { ...rest}>
+    <div data-margin={!!margins} style={cssMarginVars(margins)} ref={ref} { ...rest}>
       {children && children}
       {src.mobile && ratios.mobile && (
         <Video data-viewport={`mobile ${addedClassNames}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
@@ -147,11 +147,21 @@ export const FullVideo = forwardRef<HTMLVideoElement, IFullVideo & React.HTMLAtt
     prefixes.forEach((prefix) => document.addEventListener(`${prefix}fullscreenchange`, () => exitFullScreen(fullVideoRef.current)));
   }, [])
 
+  const setRefs = useCallback((node: any) => {
+    fullVideoRef.current = node;
+
+    if (typeof ref === 'function') {
+      ref(node);
+    } else if (ref) {
+      ref.current = node;
+    }
+  }, [])
+
   return (
-    <Tag className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null} ref={ref as any}>
+    <Tag className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null}>
       <VideoComponent {...rest} >
         {/* @ts-ignore */}
-        <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+        <Video className={styles.fullVideo} controls={true} preload="none" ref={setRefs} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
       </VideoComponent>
       {children}
     </Tag>
