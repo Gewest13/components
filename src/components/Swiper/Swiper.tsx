@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
 import styles from './Swiper.module.scss';
-import { lerp } from '../../utils/math';
 import { useWindowSize } from '../../hooks/useWindowSize';
+import { lerp } from '../../utils/math';
 
 interface ISwiperCard {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ export default function Swiper(data: ISwiper) {
 
   // Refs to access DOM elements
   const containerRef = useRef<React.ElementRef<'div'>>(null);
-  const swiperRef = useRef<React.ElementRef<'div'>>(null);  
+  const swiperRef = useRef<React.ElementRef<'div'>>(null);
 
   // Hook to get window size
   const size = useWindowSize();
@@ -203,17 +203,17 @@ export default function Swiper(data: ISwiper) {
     }
 
     state.currentX = state.offX + (clientX - state.onX) * state.speed;
-  
+
     clamp();
   };
 
   return (
-    <div 
+    <div
       className={`${`${className} ` || ''}${styles.container}`}
       ref={containerRef}
       {...rest}
     >
-      <div 
+      <div
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}

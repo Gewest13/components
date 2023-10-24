@@ -1,5 +1,7 @@
-import { StoryFn } from "@storybook/react";
 import React, { useEffect, useRef } from "react";
+
+import { StoryFn } from "@storybook/react";
+
 import { Video, VideoComponent, FullVideo, ImperativeFullVideoRef } from "./Video";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -50,14 +52,14 @@ MultiScreenVideo.args = {
 
 const TemplateFullVideo: StoryFn<typeof FullVideo> = (args) => {
   const ref = useRef<ImperativeFullVideoRef>(null);
-  
+
   useEffect(() => {
     console.log(ref.current)
   }, [])
 
-return (
-  <FullVideo ref={ref} style={{width: '100px', height: '100px'}} {...args} />
-)};
+  return (
+    <FullVideo ref={ref} style={{ width: '100px', height: '100px' }} {...args} />
+  )};
 
 export const FullScreenVideo = TemplateFullVideo.bind({});
 

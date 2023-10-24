@@ -1,4 +1,5 @@
 import React, { HTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+
 import styles from './Video.module.scss'
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
@@ -17,15 +18,15 @@ export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
   const { ratio, src, className, margins, ...rest } = props;
 
   return (
-    <div data-margin={!!margins} style={{...cssRatioVar(ratio), ...cssMarginVars(margins)}} className={`${className || ' '} ${styles.videoWrap}`}>
-      <video 
+    <div data-margin={!!margins} style={{ ...cssRatioVar(ratio), ...cssMarginVars(margins) }} className={`${className || ' '} ${styles.videoWrap}`}>
+      <video
         autoPlay
         loop
         muted
         playsInline
         className={styles.video}
-        src={src.mediaItemUrl} 
-        ref={ref} 
+        src={src.mediaItemUrl}
+        ref={ref}
         {...rest}
       />
     </div>
@@ -122,7 +123,6 @@ export const exitFullScreen = (element: HTMLVideoElement) => {
   }
 }
 
-
 export interface IFullVideo extends IFileComponent, React.HTMLAttributes<HTMLDivElement> {
   /** Source for the full video */
   srcFull: TFile;
@@ -140,7 +140,7 @@ export interface IFullVideo extends IFileComponent, React.HTMLAttributes<HTMLDiv
 export type ImperativeFullVideoRef = {
   playFullScreen: () => void;
   pauseFullScreen: () => void;
-  containerRef: HTMLDivElement;
+  containerRef: HTMLDivElement | HTMLButtonElement | null;
   fullVideoRef: HTMLVideoElement;
 }
 
@@ -148,7 +148,8 @@ export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, 
   const { disableFullScreenHandling, fullVideoAttributes, srcFull, className, children, ...rest } = props;
 
   const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
-  const containerRef = useRef() as React.MutableRefObject<HTMLDivElement>;
+  const divRef = useRef<React.ElementRef<'div'>>(null);
+  const buttonRef = useRef<React.ElementRef<'button'>>(null)
 
   useEffect(() => {
     if (disableFullScreenHandling) return;
@@ -160,32 +161,40 @@ export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, 
     );
   }, []);
 
-  useImperativeHandle(ref, () => {
-    return {
-      playFullScreen: () => {
-        if (disableFullScreenHandling) return;
+  useImperativeHandle(ref, () => ({
+    playFullScreen: () => {
+      if (disableFullScreenHandling) return;
 
-        enterFullScreen(fullVideoRef.current);
-      },
-      pauseFullScreen: () => {
-        if (disableFullScreenHandling) return;
+      enterFullScreen(fullVideoRef.current);
+    },
+    pauseFullScreen: () => {
+      if (disableFullScreenHandling) return;
 
-        exitFullScreen(fullVideoRef.current);
-      },
-      containerRef: containerRef.current,
-      fullVideoRef: fullVideoRef.current,
-    };
-  }, [disableFullScreenHandling]);
+      exitFullScreen(fullVideoRef.current);
+    },
+    containerRef: divRef.current || buttonRef.current,
+    fullVideoRef: fullVideoRef.current,
+  }), [disableFullScreenHandling]);
 
-  const Tag = disableFullScreenHandling ? 'div' : 'button' as any;
+
+  if (disableFullScreenHandling) {
+    return (
+      <div ref={divRef} className={className}>
+        <VideoComponent {...rest} >
+          <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+        </VideoComponent>
+        {children}
+      </div>
+    );
+  }
 
   return (
-    <Tag ref={containerRef} className={`${className || ''}`} onClick={!disableFullScreenHandling ? () => enterFullScreen(fullVideoRef.current) : () => null}>
+    <button ref={buttonRef} className={className} onClick={() => enterFullScreen(fullVideoRef.current)}>
       <VideoComponent {...rest} >
         <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
       </VideoComponent>
       {children}
-    </Tag>
+    </button>
   );
 });
 
