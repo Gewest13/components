@@ -2,12 +2,13 @@
 
 /* eslint-disable react/display-name */
 import React, { forwardRef } from 'react'
-import { IFileComponent } from '../../interface';
+
 import NextImage from 'next/image';
-import { cssMarginVars } from '../../functions/margin';
-import { cssRatioVar } from '../../functions/ratios';
 
 import styles from './Image.module.scss';
+import { cssMarginVars } from '../../functions/margin';
+import { cssRatioVar } from '../../functions/ratios';
+import { IFileComponent } from '../../interface';
 
 export interface IImage extends IFileComponent {
   priority?: boolean;

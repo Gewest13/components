@@ -13,7 +13,9 @@ export const mobilevw = (size: number) => {
 }
 
 export const allVwSizes = (px: number, key: string) => {
-  const vwsizes: any = { desktop: 1728, tablet: 1024, mobile: 432 };
+  const vwsizes: {
+    [key: string]: number
+  } = { desktop: 1728, tablet: 1024, mobile: 432 };
   const size = vwsizes[key];
 
   return `${(px / size) * 100}vw`;
