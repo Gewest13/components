@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 
 import styles from './Swiper.module.scss';
-import { lerp } from '../../utils/math';
 import { useWindowSize } from '../../hooks/useWindowSize';
+import { lerp } from '../../utils/math';
 
 interface ISwiperCard {
   children: React.ReactNode;
@@ -26,12 +26,22 @@ export interface ISwiper {
   className?: string;
 }
 
-export default function Swiper(data: ISwiper) {
-  const { children, snap, scroll, className, ...rest } = data;
+export type SwiperImperativeHandle = {
+  containerRef: HTMLDivElement;
+  swiperRef: HTMLDivElement;
+}
+
+export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) => {
+  const { children, snap, scroll, className, ...rest } = props;
 
   // Refs to access DOM elements
-  const containerRef = useRef<React.ElementRef<'div'>>(null);
-  const swiperRef = useRef<React.ElementRef<'div'>>(null);  
+  const containerRef = useRef() as React.MutableRefObject<HTMLDivElement>;
+  const swiperRef = useRef() as React.MutableRefObject<HTMLDivElement>;
+
+  useImperativeHandle(ref, () => ({
+    containerRef: containerRef.current,
+    swiperRef: swiperRef.current,
+  }), []);
 
   // Hook to get window size
   const size = useWindowSize();
@@ -51,7 +61,6 @@ export default function Swiper(data: ISwiper) {
     ticker: 0,
     stopTicker: true,
     offsetSlides: [] as number[],
-    onY: 0,
     percentage: 0,
     currentSnappedIndex: 0,
   }), []);
@@ -166,7 +175,6 @@ export default function Swiper(data: ISwiper) {
   const handleMouseDown = (e: React.MouseEvent) => {
     state.isDragging = true;
     state.onX = e.clientX;
-    state.onY = e.clientY;
   };
 
   // Handle mouse up event
@@ -205,17 +213,17 @@ export default function Swiper(data: ISwiper) {
     }
 
     state.currentX = state.offX + (clientX - state.onX) * state.speed;
-  
+
     clamp();
   };
 
   return (
-    <div 
+    <div
       className={`${`${className} ` || ''}${styles.container}`}
       ref={containerRef}
       {...rest}
     >
-      <div 
+      <div
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
@@ -228,4 +236,6 @@ export default function Swiper(data: ISwiper) {
       </div>
     </div>
   )
-}
+})
+
+Swiper.displayName = 'Swiper';

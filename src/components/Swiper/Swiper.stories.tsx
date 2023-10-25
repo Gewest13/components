@@ -1,7 +1,8 @@
-import { StoryFn } from "@storybook/react";
 import React from "react";
-import Swiper, { SwiperCard, ISwiper } from "./Swiper";
 
+import { StoryFn } from "@storybook/react";
+
+import Swiper, { SwiperCard, ISwiper } from "./Swiper";
 import styles from './SwiperStories.module.scss';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -26,10 +27,10 @@ const Template: StoryFn<SwiperArgs> = ({ cards, ...rest }: SwiperArgs) => (
 export const SwiperComponent = Template.bind({});
 SwiperComponent.args = {
   cards: [
-    {title: 'Card 1'},
-    {title: 'Card 2'},
-    {title: 'Card 3'},
-    {title: 'Card 4'},
-    {title: 'Card 5'},
+    { title: 'Card 1' },
+    { title: 'Card 2' },
+    { title: 'Card 3' },
+    { title: 'Card 4' },
+    { title: 'Card 5' },
   ]
 }

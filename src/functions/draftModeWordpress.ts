@@ -1,11 +1,15 @@
-import { NextResponse } from "next/server";
 import { cookies, draftMode } from 'next/headers';
+import { NextResponse } from "next/server";
 
 export type FetchWordpress = {
   api_url: string;
   query: string;
   token?: string;
-  variables?: any;
+  variables?: {
+    [key: string]: string | {
+      [key: string]: string;
+    }
+  };
 };
 
 export const fetchWordpress = async ({ api_url, query, variables, token }: FetchWordpress) => {
@@ -70,7 +74,7 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
   const oneHourFromNow = new Date(Date.now() + 60 * 60 * 1000);
 
   if (!pageData || !token) {
-    const loginData = await fetchWordpress({ api_url, query: loginMutation, variables: { input: { username, password } }});
+    const loginData = await fetchWordpress({ api_url, query: loginMutation, variables: { input: { username, password } } });
 
     if (loginData.errors) {
       console.log('Error login');
@@ -82,7 +86,7 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
     draftMode().disable();
     return NextResponse.redirect(`${origin}${pageData.contentNode.uri}`, {
       status: 307,
-      headers: { 'Set-Cookie': `token=${newToken}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}`,},
+      headers: { 'Set-Cookie': `token=${newToken}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}`, },
     });
   }
 
@@ -90,6 +94,6 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
 
   return NextResponse.redirect(`${origin}${pageData.contentNode.uri}`, {
     status: 307,
-    headers: { 'Set-Cookie': `token=${token}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}`,},
+    headers: { 'Set-Cookie': `token=${token}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}`, },
   });
 };

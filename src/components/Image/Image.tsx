@@ -1,13 +1,13 @@
 'use client';
 
-/* eslint-disable react/display-name */
 import React, { forwardRef } from 'react'
-import { IFileComponent } from '../../interface';
+
 import NextImage from 'next/image';
-import { cssMarginVars } from '../../functions/margin';
-import { cssRatioVar } from '../../functions/ratios';
 
 import styles from './Image.module.scss';
+import { cssMarginVars } from '../../functions/margin';
+import { cssRatioVar } from '../../functions/ratios';
+import { IFileComponent } from '../../interface';
 
 export interface IImage extends IFileComponent {
   priority?: boolean;
@@ -17,7 +17,7 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
   const { src, margins, ratios, priority, ...rest } = props
 
   return (
-    <div data-margin style={cssMarginVars(margins)} ref={ref} {...rest}>
+    <div data-margin={!!margins} style={cssMarginVars(margins)} ref={ref} {...rest}>
       {Object.keys(src).map((key, index) => {
         const item = src[key as 'desktop'] as IImage['src']['desktop'];
         const ratio = ratios[key as 'desktop'] as IImage['ratios']['desktop'];
@@ -41,3 +41,5 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
     </div>
   )
 })
+
+Image.displayName = 'Image'

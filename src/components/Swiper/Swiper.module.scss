@@ -20,6 +20,8 @@
 }
 
 .container {
+  overflow: clip;
+
   @media (hover: none) {
     overflow: scroll scroll;
     scroll-snap-type: x mandatory;

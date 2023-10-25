@@ -1,6 +1,8 @@
+import React, { useRef } from "react";
+
 import { StoryFn } from "@storybook/react";
-import React from "react";
-import { Video, VideoComponent } from "./Video";
+
+import { Video, VideoComponent, FullVideo, ImperativeFullVideoRef } from "./Video";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -44,6 +46,37 @@ MultiScreenVideo.args = {
   ratios: {
     mobile: [100, 100],
     tablet: [100, 100],
+    desktop: [100, 100]
+  }
+}
+
+const TemplateFullVideo: StoryFn<typeof FullVideo> = (args) => {
+  const ref = useRef<ImperativeFullVideoRef>(null);
+
+  // useEffect(() => {
+  //   console.log(ref.current)
+
+  //   setTimeout(() => {
+  //     ref.current?.playFullScreen()
+  //   }, 4000)
+  // }, [])
+
+  return (
+    <FullVideo ref={ref} style={{ width: '100px', height: '100px' }} {...args} />
+  )};
+
+export const FullScreenVideo = TemplateFullVideo.bind({});
+
+FullScreenVideo.args = {
+  src: {
+    desktop: {
+      mediaItemUrl: 'https://lucis.gwst13.com/wp-content/uploads/2023/09/HTCE-Sequence-02_4.mp4'
+    }
+  },
+  srcFull: {
+    mediaItemUrl: 'https://lucis.gwst13.com/wp-content/uploads/2023/09/HTCE-Sequence-02_4.mp4'
+  },
+  ratios: {
     desktop: [100, 100]
   }
 }
