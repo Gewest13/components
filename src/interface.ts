@@ -21,6 +21,21 @@ export interface Grids {
   desktop?: string;
 }
 
+export type Grid = {
+  mobile: {
+    column: string;
+    row?: string;
+  },
+  tablet?: {
+    column: string;
+    row?: string;
+  },
+  desktop: {
+    column: string;
+    row?: string;
+  }
+}
+
 export interface FileSource {
   /** URL of the File source for desktop devices */
   desktop: TFile;

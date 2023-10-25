@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { forwardRef } from 'react'
+
 import styles from './TwoColumnsContainer.module.scss';
 import { cssGridsVars } from '../../functions/grid';
 
@@ -20,7 +21,7 @@ export interface ITwoColumnsContainer {
 }
 
 export const TwoColumnsContainer = forwardRef<HTMLDivElement, ITwoColumnsContainer & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { CointainerTag = 'p', column1, column2, } = props 
+  const { CointainerTag = 'p', column1, column2, } = props
 
   return (
     <CointainerTag ref={ref}>
