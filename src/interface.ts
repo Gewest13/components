@@ -12,6 +12,15 @@ export interface Margins {
   desktop?: [number, number, number, number];
 }
 
+export interface Grids {
+  /** Grid for mobile devices */
+  mobile?: string;
+  /** Grid for tablet devices */
+  tablet?: string;
+  /** Grid for desktop devices */
+  desktop?: string;
+}
+
 export interface FileSource {
   /** URL of the File source for desktop devices */
   desktop: TFile;
