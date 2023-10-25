@@ -9,7 +9,7 @@ interface ISwiperCard {
   className?: string;
 }
 
-export function SwiperCard(data: ISwiperCard) {
+export const SwiperCard = (data: ISwiperCard) => {
   const { children, className } = data;
 
   return (
