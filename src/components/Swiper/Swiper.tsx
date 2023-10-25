@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 
 import styles from './Swiper.module.scss';
 import { useWindowSize } from '../../hooks/useWindowSize';
@@ -26,12 +26,22 @@ export interface ISwiper {
   className?: string;
 }
 
-export default function Swiper(data: ISwiper) {
-  const { children, snap, scroll, className, ...rest } = data;
+export type SwiperImperativeHandle = {
+  containerRef: HTMLDivElement;
+  swiperRef: HTMLDivElement;
+}
+
+export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) => {
+  const { children, snap, scroll, className, ...rest } = props;
 
   // Refs to access DOM elements
-  const containerRef = useRef<React.ElementRef<'div'>>(null);
-  const swiperRef = useRef<React.ElementRef<'div'>>(null);
+  const containerRef = useRef() as React.MutableRefObject<HTMLDivElement>;
+  const swiperRef = useRef() as React.MutableRefObject<HTMLDivElement>;
+
+  useImperativeHandle(ref, () => ({
+    containerRef: containerRef.current,
+    swiperRef: swiperRef.current,
+  }), []);
 
   // Hook to get window size
   const size = useWindowSize();
@@ -226,4 +236,6 @@ export default function Swiper(data: ISwiper) {
       </div>
     </div>
   )
-}
+})
+
+Swiper.displayName = 'Swiper';
