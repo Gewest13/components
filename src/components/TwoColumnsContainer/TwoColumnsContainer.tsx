@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { forwardRef } from 'react'
-import styles from './TwoColumnContainer.module.scss';
+import styles from './TwoColumnsContainer.module.scss';
 import { cssGridsVars } from '../../functions/grid';
 
 interface IColumn {
@@ -13,13 +13,13 @@ interface IColumn {
   render: React.ReactNode;
 }
 
-export interface ITwoColumnContainer {
+export interface ITwoColumnsContainer {
   CointainerTag: any;
   column1: IColumn;
   column2: IColumn;
 }
 
-export const TwoColumnContainer = forwardRef<HTMLDivElement, ITwoColumnContainer & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+export const TwoColumnsContainer = forwardRef<HTMLDivElement, ITwoColumnsContainer & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { CointainerTag = 'p', column1, column2, } = props 
 
   return (
