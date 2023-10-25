@@ -17,8 +17,8 @@ export const cssColumRowVars = (grid?: Grid): LenientCSSProperties | undefined =
   return (['mobile', 'tablet', 'desktop'] as const).reduce((acc: LenientCSSProperties, device) => {
     const deviceGrid = grid[device];
     if (deviceGrid) {
-      acc[`--${device}-column`] = deviceGrid.column;
-      acc[`--${device}-row`] = deviceGrid.row;
+      acc[`--column-${device}`] = deviceGrid.column;
+      acc[`--row-${device}`] = deviceGrid.row;
     }
     return acc;
   }, {});
