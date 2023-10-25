@@ -23,7 +23,7 @@ export const TwoColumnsContainer = forwardRef<HTMLDivElement, ITwoColumnsContain
   const { CointainerTag = 'p', column1, column2, } = props 
 
   return (
-    <CointainerTag>
+    <CointainerTag ref={ref}>
       <div style={cssGridsVars(column1.grids)} className={`${styles.gridItem} ${column1.className || ''}`} data-grid={true}>
         {column1.render}
       </div>
