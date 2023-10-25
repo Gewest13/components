@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable react/display-name */
 import React, { forwardRef } from 'react'
 
 import NextImage from 'next/image';
@@ -42,3 +41,5 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
     </div>
   )
 })
+
+Image.displayName = 'Image'
