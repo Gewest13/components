@@ -24,7 +24,7 @@ ImageComponent.args = {
         desktop: { column: '1 / 4' },
         mobile: { column: '1 / -1' }
       },
-      component: <div>test</div>
+      component: <div>Test</div>
     },
     {
       grids: {
@@ -32,7 +32,7 @@ ImageComponent.args = {
         mobile: { column: '1 / -1', row: '1 / 2' },
         tablet: { column: '1 / -1', row: '1 / 2' }
       },
-      component: <div>test</div>
+      component: <></>
     },
   ]
 };
