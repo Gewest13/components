@@ -125,7 +125,7 @@ export const exitFullScreen = (element: HTMLVideoElement) => {
 
 export interface IFullVideo extends IFileComponent, React.HTMLAttributes<HTMLDivElement> {
   /** Source for the full video */
-  srcFull: TFile;
+  srcFull?: TFile;
 
   /** Indicates whether the full-screen handling is disabled */
   disableFullScreenHandling?: boolean;
@@ -176,12 +176,14 @@ export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, 
     fullVideoRef: fullVideoRef.current,
   }), [disableFullScreenHandling]);
 
-
+  // Someone fix this ugly code (it's not from Niels Reijnders)
   if (disableFullScreenHandling) {
     return (
       <div ref={divRef} className={className}>
         <VideoComponent {...rest} >
-          <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+          {srcFull && (
+            <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+          )}
         </VideoComponent>
         {children}
       </div>
@@ -191,7 +193,9 @@ export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, 
   return (
     <button ref={buttonRef} className={className} onClick={() => enterFullScreen(fullVideoRef.current)}>
       <VideoComponent {...rest} >
-        <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+        {srcFull && (
+          <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
+        )}
       </VideoComponent>
       {children}
     </button>

@@ -22,6 +22,9 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
         const item = src[key as 'desktop'] as IImage['src']['desktop'];
         const ratio = ratios[key as 'desktop'] as IImage['ratios']['desktop'];
 
+        if (!item) return null;
+        if (!item.mediaItemUrl) return null;
+
         return (
           <div data-viewport={key} key={index} className={styles.imageWrap} style={cssRatioVar(ratio)}>
             <NextImage
