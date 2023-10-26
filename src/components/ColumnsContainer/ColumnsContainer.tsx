@@ -1,10 +1,7 @@
 import React, { forwardRef } from 'react';
 
-import styles from './ColumnsContainer.module.scss';
 import { cssColumRowVars } from '../../functions/grid';
 import { Grid } from '../../interface';
-
-
 
 export interface IColumnsContainerProps {
   Container: React.ElementType
@@ -22,7 +19,7 @@ export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProp
     <Container ref={ref}>
       {columns.map((column, index) => {
         return (
-          <div style={cssColumRowVars(column.grids)} className={`${styles.gridItem} ${column.className || ''}`} data-grid={true} key={index}>
+          <div style={cssColumRowVars(column.grids)} className={`${column.className || ''}`} data-grid={true} key={index}>
             {column.component}
           </div>
         )
