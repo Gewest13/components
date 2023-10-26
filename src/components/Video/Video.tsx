@@ -134,7 +134,7 @@ export interface IFullVideo extends IFileComponent, React.HTMLAttributes<HTMLDiv
   children?: React.ReactNode;
 
   /** Additional HTML attributes for the full video element */
-  fullVideoAttributes: HTMLAttributes<HTMLVideoElement>
+  fullVideoAttributes?: HTMLAttributes<HTMLVideoElement>
 }
 
 export type ImperativeFullVideoRef = {
