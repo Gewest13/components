@@ -20,6 +20,8 @@ export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProp
   return (
     <Container ref={ref} {...rest}>
       {columns.map((column, index) => {
+        if (!column.component) return null;
+
         return (
           <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''} ${column.className || ''}`} data-grid={true} key={index}>
             {column.component}
