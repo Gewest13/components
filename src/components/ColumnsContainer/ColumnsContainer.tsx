@@ -14,7 +14,7 @@ export interface IColumnsContainerProps {
   }[]
 }
 
-export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProps>((props, ref) => {
+export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProps & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { Container = 'div', columns, oneRow, ...rest } = props;
 
   return (
