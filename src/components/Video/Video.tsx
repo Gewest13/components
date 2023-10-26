@@ -12,13 +12,14 @@ export interface IVideoProps extends HTMLAttributes<HTMLVideoElement> {
   margins?: Margins;
   controls?: boolean;
   preload?: "none" | "metadata" | "auto";
+  'data-viewport'?: string;
 }
 
 export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
-  const { ratio, src, className, margins, ...rest } = props;
+  const { ratio, src, className, margins, 'data-viewport': viewport, ...rest } = props;
 
   return (
-    <div data-margin={!!margins} style={{ ...cssRatioVar(ratio), ...cssMarginVars(margins) }} className={`${className || ' '} ${styles.videoWrap}`}>
+    <div data-viewport={viewport} data-margin={!!margins} style={{ ...cssRatioVar(ratio), ...cssMarginVars(margins) }} className={`${className || ' '} ${styles.videoWrap}`}>
       <video
         autoPlay
         loop
