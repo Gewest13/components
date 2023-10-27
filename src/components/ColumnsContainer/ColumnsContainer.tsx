@@ -1,4 +1,4 @@
-import React, { forwardRef, isValidElement } from 'react';
+import React, { forwardRef } from 'react';
 
 import styles from './ColumnsContainer.module.scss';
 import { cssColumRowVars } from '../../functions/grid';
@@ -20,10 +20,6 @@ export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProp
   return (
     <Container ref={ref} {...rest}>
       {columns.map((column, index) => {
-        if (!isValidElement(column.component)) return null;
-
-        if (!column.component.props.children) return null;
-
         return (
           <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''} ${column.className || ''}`} data-grid={true} key={index}>
             {column.component}

@@ -1,6 +1,6 @@
 {
   "name": "@gewest13/components",
-  "version": "1.5.91",
+  "version": "1.5.92",
   "description": "Template and quick-starter to create modern React libraries using Rollup.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
