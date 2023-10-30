@@ -1,3 +1,4 @@
+'use server';
 
 import { cookies, draftMode } from 'next/headers';
 import { NextResponse } from 'next/server';
