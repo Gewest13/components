@@ -74,7 +74,9 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
   const oneHourFromNow = new Date(Date.now() + 60 * 60 * 1000);
 
   if (!pageData || !token) {
-    const loginData = await fetchWordpress({ api_url, query: loginMutation, variables: { input: { username, password } } });
+    const loginResponse = await fetchWordpress({ api_url, query: loginMutation, variables: { input: { username, password } } });
+
+    const loginData = await loginResponse.json();
 
     if (loginData.errors) {
       console.log('Error login');
