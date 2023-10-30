@@ -1,5 +1,7 @@
+
 import { cookies, draftMode } from 'next/headers';
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+
 
 export type FetchWordpress = {
   api_url: string;
@@ -13,13 +15,25 @@ export type FetchWordpress = {
 };
 
 export const fetchWordpress = async ({ api_url, query, variables, token }: FetchWordpress) => {
+  const headers: any = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(api_url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers,
     body: JSON.stringify({ query, variables }),
   });
 
   const json = await response.json();
+
+  if (json.errors) {
+    return json;
+  }
 
   return json.data;
 };
@@ -74,21 +88,18 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
   const oneHourFromNow = new Date(Date.now() + 60 * 60 * 1000);
 
   if (!pageData || !token) {
-    const loginResponse = await fetchWordpress({ api_url, query: loginMutation, variables: { input: { username, password } } });
-
-    const loginData = await loginResponse.json();
+    const loginData = await fetchWordpress({ api_url, query: loginMutation, variables: { input: { username, password } } });
 
     if (loginData.errors) {
-      console.log('Error login');
       return NextResponse.json({ message: 'Wrong username or password.' }, secureHeaderOptions);
     }
 
-    const newToken = loginData.data.login.authToken;
+    const newToken = loginData.login.authToken;
 
     draftMode().disable();
     return NextResponse.redirect(`${origin}${pageData.contentNode.uri}`, {
       status: 307,
-      headers: { 'Set-Cookie': `token=${newToken}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}`, },
+      headers: { 'Set-Cookie': `token=${newToken}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}` },
     });
   }
 
@@ -96,6 +107,6 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
 
   return NextResponse.redirect(`${origin}${pageData.contentNode.uri}`, {
     status: 307,
-    headers: { 'Set-Cookie': `token=${token}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}`, },
+    headers: { 'Set-Cookie': `token=${token}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}` },
   });
 };
