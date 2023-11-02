@@ -21,6 +21,7 @@ export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
   return (
     <div data-viewport={viewport} data-margin={!!margins} style={{ ...cssRatioVar(ratio), ...cssMarginVars(margins) }} className={`${className || ' '} ${styles.videoWrap}`}>
       <video
+        data-viewport={viewport}
         autoPlay
         loop
         muted
@@ -44,31 +45,19 @@ export interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTML
 export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps>((props, ref) => {
   const { ratios, src, margins, videoAttributes, children, ...rest } = props;
 
-  let addedClassNames = '';
-
-  if (!src.mobile) {
-    addedClassNames += ' mobile';
-  }
-
-  if (!src.tablet) {
-    addedClassNames += ' tablet';
-  }
-
-  if (!src.desktop) {
-    addedClassNames += ' desktop';
-  }
+  const hasOneVideo = Object.keys(src).length === 1;
 
   return (
     <div data-margin={!!margins} style={cssMarginVars(margins)} ref={ref} { ...rest}>
       {children && children}
       {src.mobile && ratios.mobile && (
-        <Video data-viewport={`mobile ${addedClassNames}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
+        <Video data-viewport={`${!hasOneVideo ? 'mobile' : ''}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
       )}
       {src.tablet && ratios.tablet && (
-        <Video data-viewport={`tablet ${addedClassNames}`} src={src.tablet} ratio={ratios.tablet} {...videoAttributes}  />
+        <Video data-viewport={`${!hasOneVideo ? 'tablet' : ''}`} src={src.tablet} ratio={ratios.tablet} {...videoAttributes}  />
       )}
       {src.desktop && ratios.desktop && (
-        <Video data-viewport={`desktop ${addedClassNames}`} src={src.desktop} ratio={ratios.desktop} {...videoAttributes}  />
+        <Video data-viewport={`${!hasOneVideo ? 'desktop' : ''}`} src={src.desktop} ratio={ratios.desktop} {...videoAttributes}  />
       )}
     </div>
   );
