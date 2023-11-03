@@ -1,3 +1,5 @@
+'use client';
+
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 
 import styles from './Swiper.module.scss';

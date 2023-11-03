@@ -88,7 +88,7 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
   const pageData = await fetchWordpress({ api_url, query: checkIfPrivateSlugExists, variables: { id }, token });
   const oneHourFromNow = new Date(Date.now() + 60 * 60 * 1000);
 
-  if (!pageData || !token) {
+  if (!pageData.contentNode || !token) {
     const loginData = await fetchWordpress({ api_url, query: loginMutation, variables: { input: { username, password } } });
 
     if (loginData.errors) {
