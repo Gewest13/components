@@ -97,17 +97,16 @@ export const draftModeWordpress = async (api_url: string, req: Request) => {
 
     const newToken = loginData.login.authToken;
 
-    draftMode().disable();
+    draftMode().enable();
     return NextResponse.redirect(`${origin}${pageData.contentNode.uri}`, {
       status: 307,
-      headers: { 'Set-Cookie': `token=${newToken}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}` },
+      headers: { 'Set-Cookie': `token=${newToken}; SameSite=Strict; Secure; Expires=${oneHourFromNow.toUTCString()}` },
     });
   }
 
   draftMode().enable();
-
   return NextResponse.redirect(`${origin}${pageData.contentNode.uri}`, {
     status: 307,
-    headers: { 'Set-Cookie': `token=${token}; HttpOnly; Secure; SameSite=Strict; Expires=${oneHourFromNow.toUTCString()}` },
+    headers: { 'Set-Cookie': `token=${token}; SameSite=Strict; Secure; Expires=${oneHourFromNow.toUTCString()}` },
   });
 };
