@@ -28,7 +28,6 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
         return (
           <div data-viewport={key} key={index} className={styles.imageWrap} style={{ ...cssRatioVar(ratio), aspectRatio: ratio[0] / ratio[1] }}>
             <NextImage
-              style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
               className={styles.image}
               data-viewport={key}
               key={index}
