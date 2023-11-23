@@ -26,7 +26,7 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
         if (!item.mediaItemUrl) return null;
 
         return (
-          <div data-viewport={key} key={index} className={styles.imageWrap} style={cssRatioVar(ratio)}>
+          <div data-viewport={key} key={index} className={styles.imageWrap} style={{ ...cssRatioVar(ratio), aspectRatio: ratio[0] / ratio[1] }}>
             <NextImage
               className={styles.image}
               data-viewport={key}
