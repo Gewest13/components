@@ -46,7 +46,7 @@ export const fetchWordpress = async ({ api_url, query, variables, token, noGetRe
       body: JSON.stringify({ query, variables }),
     });
   } else {
-    response = await fetch(`${api_url}?query=${query}`, {
+    response = await fetch((`${api_url}?query=${query}${variables ? `&variables=${JSON.stringify(variables)}` : ''}`).replace(/\s+/g, ' ').replace(/\t/g, '').trim(), {
       method: 'GET',
       headers,
     });
