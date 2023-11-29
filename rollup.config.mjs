@@ -55,6 +55,7 @@ export default [
   addConfig({ componentName: 'Image', path: 'src/components/Image/Image.tsx', pathCss: 'src/components/Image/Image.module.scss' }),
   addConfig({ componentName: 'Video', path: 'src/components/Video/Video.tsx', pathCss: 'src/components/Video/Video.module.scss' }),
   addConfig({ componentName: 'Swiper', path: 'src/components/Swiper/Swiper.tsx', pathCss: 'src/components/Swiper/Swiper.module.scss' }),
+  addConfig({ componentName: 'ColumnsContainer', path: 'src/components/ColumnsContainer/ColumnsContainer.tsx', pathCss: 'src/components/ColumnsContainer/ColumnsContainer.module.scss' }),
   addConfig({ componentName: 'fetchWordpress', path: 'src/functions/fetchWordpress.ts' }),
   addConfig({ componentName: 'draftModeWordpress', path: 'src/functions/draftModeWordpress.ts' }),
   addConfig({ componentName: 'margin', path: 'src/functions/margin.ts' }),
