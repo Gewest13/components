@@ -8,6 +8,8 @@ export type FetchWordpress = {
   noGetRequest?: boolean;
   debug?: boolean;
   performanceLog?: boolean;
+  revalidateTag?: string;
+  disableError?: boolean;
   variables?: {
     [key: string]: string | {
       [key: string]: string;
@@ -15,15 +17,18 @@ export type FetchWordpress = {
   };
 };
 
-export const fetchWordpress = async ({ api_url, query, variables, token, noGetRequest, debug, performanceLog }: FetchWordpress) => {
+export const fetchWordpress = async ({ api_url, query, variables, token, noGetRequest, debug, performanceLog , revalidateTag, disableError }: FetchWordpress) => {
   const headers: any = {
     'Content-Type': 'application/json',
   };
 
+  const next =  { revalidate: 60, tags: revalidateTag ? [revalidateTag.toString()] : undefined }
+
   let response;
 
   if (debug) {
-    const logData = `Debug fetch wordpress: ${api_url}, ${query}, ${JSON.stringify(variables)}\n`;
+    const time = new Date().toISOString();
+    const logData = `Debug fetch wordpress ${time}: ${api_url}, ${query}, ${JSON.stringify(variables)}\n`;
 
     const logFilePath = path.join(__dirname, 'debug.log');
 
@@ -40,15 +45,17 @@ export const fetchWordpress = async ({ api_url, query, variables, token, noGetRe
   }
 
   if (noGetRequest || token) {
-    response = await fetch(api_url, {
+    response = await (fetch as any)(api_url, {
       method: 'POST',
       headers,
       body: JSON.stringify({ query, variables }),
+      next
     });
   } else {
-    response = await fetch((`${api_url}?query=${query}${variables ? `&variables=${JSON.stringify(variables)}` : ''}`).replace(/\s+/g, ' ').replace(/\t/g, '').trim(), {
+    response = await (fetch as any)((`${api_url}?query=${query}${variables ? `&variables=${JSON.stringify(variables)}` : ''}`).replace(/\s+/g, ' ').replace(/\t/g, '').trim(), {
       method: 'GET',
       headers,
+      next,
     });
   }
 
@@ -59,7 +66,9 @@ export const fetchWordpress = async ({ api_url, query, variables, token, noGetRe
   }
 
   if (json.errors) {
-    return json;
+    if (disableError) return json.data;
+
+    throw json.errors;
   }
 
   return json.data;
