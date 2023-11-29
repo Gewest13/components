@@ -4,10 +4,9 @@ import nodemailer from 'nodemailer';
 
 import { fetchWordpress } from "./fetchWordpress";
 
-
 const getAllPrivateSettings = `
   query GetAllPrivateSettings {
-    allPrivateSettings {
+    allPrivateSettings(where: {status: PRIVATE}) {
       nodes {
         acfPrivate {
           recaptcha {
@@ -94,6 +93,7 @@ interface EmailMessage {
   confirmationRecipient: string;
   senderSubject: string;
   recaptcha: string;
+  secretKey?: string;
 }
 
 async function sendNodeMailer(
@@ -110,7 +110,7 @@ async function sendNodeMailer(
   }
 }
 
-const fetchToken =  async ({ wordpress_username, wordpress_password, api_url }: IpostWpMail) => {
+const fetchToken = async ({ wordpress_username, wordpress_password, api_url }: IpostWpMail) => {
   const result = await fetch(api_url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -128,13 +128,13 @@ const fetchToken =  async ({ wordpress_username, wordpress_password, api_url }: 
   const { data } = await result.json();
 
   return data.login.authToken;
-}
+};
 
-const fetchPrivateSettings = async ({ api_url, token }: { token: string, api_url: string }) => {
-  const data = await fetchWordpress({ api_url, query: getAllPrivateSettings, token, noGetRequest: true, disableError: true });
+const fetchPrivateSettings = async ({ api_url, token, disableError }: { token: string, api_url: string, disableError?: boolean }) => {
+  const data = await fetchWordpress({ api_url, query: getAllPrivateSettings, token, noGetRequest: true, disableError });
 
   return data;
-}
+};
 
 export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_password }: IpostWpMail & { req: Request }) => {
   const body = await req.json();
@@ -148,41 +148,43 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     confirmationRecipientSubject,
     confirmationRecipient,
     recaptcha,
+    secretKey,
   } = body as EmailMessage;
 
   const cookieStore = cookies();
 
   // fetch token from cookie
-  let token = String(cookieStore.get('token')?.value);
+  let token = cookieStore.get('token')?.value as string;
 
   // if token does not exist try to fetch new token
   if (!token) {
     token = await fetchToken({ api_url, wordpress_username, wordpress_password });
+    console.log(token);
   }
 
   // if token exist try to fetch private settings (would be the fastest way)
-  let data = await fetchPrivateSettings({ api_url, token });
+  let data = await fetchPrivateSettings({ api_url, token, disableError: true });
 
   // if token is invalid try to fetch new token (this will happen if the token is expired)
-  if (!data.login) {
+  if (!data) {
     token = await fetchToken({ api_url, wordpress_username, wordpress_password });
-    data = await fetchPrivateSettings({ api_url, token });
+    data = await fetchPrivateSettings({ api_url, token, disableError: false });
   }
 
   // if data is still invalid return error (this will hapen if password or username is wrong)
-  if (!data.login) {
-    return NextResponse.json({ message: 'Wordpress username of password is wrong.' }, { status: 500 });
+  if (!data) {
+    return NextResponse.json({ message: 'Something went wrong logging in the wordpress', error: JSON.stringify(data) }, { status: 500 });
   }
 
   const formattedData = data.allPrivateSettings.nodes[0].acfPrivate;
   const privateSettings: TPrivateSettings = formattedData;
 
   // Important otherwise no mail will be sent
-  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => smtpAccount.databaseId === senderId);
+  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(senderId));
 
   // Important otherwise the mail reciever will not get any emails
   // We will use filter here since more than one mail reciever can be used
-  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => smtpAccount.databaseId === recipientId);
+  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => String(smtpAccount.databaseId) === String(recipientId));
 
   if (!getSmtpAccountMailSender) {
     return NextResponse.json({ message: `SMTP account mail reciever not found. Check under SMTP accounts if a post with ${senderId} ID exist.` }, { status: 500 });
@@ -225,9 +227,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     console.log('Server is ready to take our messages');
   } catch (error) {
     console.log(error);
-    return NextResponse.json(
-      { error, message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 },
-    );
+    return NextResponse.json({ error, message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
   }
 
   const messageReciever = confirmationRecipient.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
@@ -251,8 +251,8 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   };
 
   try {
-    if (RECAPTCHA_SECRET_KEY) {
-      const recaptchaRes = await fetch( `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptcha}`,{ method: 'POST', },);
+    if (RECAPTCHA_SECRET_KEY && secretKey !== RECAPTCHA_SECRET_KEY) {
+      const recaptchaRes = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptcha}`, { method: 'POST' });
       const json = await recaptchaRes.json();
 
       if (json.success !== undefined && !json.success) {
@@ -277,7 +277,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   } catch (error: any) {
     return NextResponse.json({ error: error.message, message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
   }
-}
+};
 
 export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_username }: IpostWpMail & { req: Request }) => {
   const { searchParams } = new URL(req.url);
@@ -300,7 +300,6 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
 
   return postWpMail({
     api_url, wordpress_password, wordpress_username,
-    req: { json: () => Promise.resolve({ body }) } as any,
+    req: { json: () => Promise.resolve(body) } as any,
   });
-}
-
+};
