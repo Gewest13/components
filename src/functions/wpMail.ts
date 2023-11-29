@@ -84,15 +84,31 @@ interface IpostWpMail {
 }
 
 interface EmailMessage {
-  recipientId: string;
-  senderId: string;
-  confirmationSubject: string;
-  confirmationRecipientSubject: string;
+  /** Key-value pairs representing the content of the email */
   mail: { [key: string]: string };
-  confirmationEmail: string;
-  confirmationRecipient: string;
-  senderSubject: string;
-  recaptcha: string;
+
+  /** Information about the sender */
+  sender: {
+    id: string; // Unique identifier for the sender
+  };
+
+  /** Extra confirmation data for the client */
+  dataGetter: {
+    id: string[];    // Array of unique identifiers for data retrieval
+    subject: string; // Subject for data retrieval
+    content: string; // Content for data retrieval
+  };
+
+  /** Details for the confirmation email */
+  confirmation: {
+    subject: string; // Subject for the confirmation email
+    content: string; // Content for the confirmation email
+  };
+
+  /** Recaptcha response string */
+  recaptcha?: string;
+
+  /** Optional secret key for additional security (may be undefined) */
   secretKey?: string;
 }
 
@@ -140,15 +156,12 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   const body = await req.json();
 
   const {
-    recipientId,
-    senderId,
     mail,
-    confirmationSubject,
-    confirmationEmail,
-    confirmationRecipientSubject,
-    confirmationRecipient,
     recaptcha,
     secretKey,
+    sender,
+    dataGetter,
+    confirmation,
   } = body as EmailMessage;
 
   const cookieStore = cookies();
@@ -191,18 +204,18 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   }
 
   // Important otherwise no mail will be sent
-  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(senderId));
+  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(sender.id));
 
   // Important otherwise the mail reciever will not get any emails
   // We will use filter here since more than one mail reciever can be used
-  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => String(smtpAccount.databaseId) === String(recipientId));
+  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataGetter.id.includes(String(smtpAccount.databaseId)));
 
   if (!getSmtpAccountMailSender) {
-    return NextResponse.json({ message: `SMTP account mail reciever not found. Check under SMTP accounts if a post with ${senderId} ID exist.` }, { status: 500 });
+    return NextResponse.json({ message: `SMTP account mail reciever not found. Check under SMTP accounts if a post with ${sender.id} ID exist.` }, { status: 500 });
   }
 
   if (!getSmtpAccountMailReciever) {
-    return NextResponse.json({ message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${recipientId} ID exist.` }, { status: 500 });
+    return NextResponse.json({ message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataGetter.id[0]} ID exist.` }, { status: 500 });
   }
 
   const {
@@ -219,10 +232,10 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   } = getSmtpAccountMailSender!;
 
   if (!SENDER_MAIL_PASSWORD || !SENDER_MAIL_PORT || !SENDER_MAIL_SERVER || !SENDER_MAIL_USERNAME) {
-    return NextResponse.json({ message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${senderId}` }, { status: 500 });
+    return NextResponse.json({ message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${sender.id}` }, { status: 500 });
   }
 
-  const sender = (nodemailer as any).createTransport({
+  const transport = (nodemailer as any).createTransport({
     port: SENDER_MAIL_PORT,
     host: SENDER_MAIL_SERVER,
     pool: SENDER_MAIL_POOL,
@@ -234,38 +247,39 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   });
 
   try {
-    await sender.verify();
+    await transport.verify();
     console.log('Server is ready to take our messages');
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error, message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
   }
 
-  const messageReciever = confirmationRecipient.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
-  const messageConfirmation = confirmationEmail.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  const messageSubject = confirmation.subject .replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  const message = confirmation.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
 
-
+  const messageRecipientSubject = dataGetter.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  const messageRecipient = dataGetter.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);[]
 
   const mailData = {
     from: SENDER_MAIL_USERNAME,
-    to: getSmtpAccountMailReciever.map(({ smtpAccount }) => smtpAccount.acfSmtp.username),
-    subject: confirmationSubject,
-    text: messageConfirmation,
-    html: messageConfirmation,
+    to: getSmtpAccountMailReciever!.map(({ smtpAccount }) => smtpAccount.acfSmtp.username),
+    subject: messageSubject,
+    text: message,
+    html: message,
   };
 
   const clientData = {
     from: SENDER_MAIL_USERNAME,
     to: mail.email,
-    subject: confirmationRecipientSubject,
-    html: messageReciever,
+    subject: messageRecipientSubject,
+    html: messageRecipient,
   };
 
   try {
     // First send mail to reciever
-    await sendNodeMailer(sender, clientData);
+    await sendNodeMailer(transport, clientData);
     // Then send mail to sender
-    await sendNodeMailer(sender, mailData);
+    await sendNodeMailer(transport, mailData);
 
     const oneMonthFromNow = new Date(Date.now() + 60 * 60 * 1000 * 24 * 30);
 
@@ -285,20 +299,25 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
   const { searchParams } = new URL(req.url);
   const { id, email_reciever, secretKey } = Object.fromEntries(searchParams);
 
-  const body = {
-    recipientId: id,
+  const body: EmailMessage = {
     mail: {
-      email: email_reciever,
       name: 'Test',
+      email: email_reciever,
       message: 'Test',
     },
-    subject: 'Test',
-    confirmationEmail: 'Test',
-    confirmationRecipient: 'Test',
-    senderId: id,
-    mail_subject: 'Test',
-    recaptcha: 'Test',
-    secretKey
+    sender: {
+      id,
+    },
+    dataGetter: {
+      id: [id],
+      subject: 'Test',
+      content: 'Test',
+    },
+    confirmation: {
+      subject: 'Test',
+      content: 'Test',
+    },
+    secretKey: secretKey,
   };
 
   return postWpMail({
