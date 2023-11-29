@@ -1,7 +1,3 @@
-// export const draftModeWordpress = async (api_url: string, req: Request) => {
-//   const { searchParams, origin } = new URL(req.url);
-//   const { disable, username, password, uri: id } = Object.fromEntries(searchParams);
-
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import nodemailer from 'nodemailer';
