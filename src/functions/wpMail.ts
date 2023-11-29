@@ -179,6 +179,17 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   const formattedData = data.allPrivateSettings.nodes[0].acfPrivate;
   const privateSettings: TPrivateSettings = formattedData;
 
+  const RECAPTCHA_SECRET_KEY = privateSettings.recaptcha.secretKey;
+
+  if (RECAPTCHA_SECRET_KEY && secretKey !== RECAPTCHA_SECRET_KEY) {
+    const recaptchaRes = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptcha}`, { method: 'POST' });
+    const json = await recaptchaRes.json();
+
+    if (json.success !== undefined && !json.success) {
+      return NextResponse.json({ error: 'Bot detected', message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
+    }
+  }
+
   // Important otherwise no mail will be sent
   const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(senderId));
 
@@ -233,7 +244,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   const messageReciever = confirmationRecipient.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
   const messageConfirmation = confirmationEmail.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
 
-  const RECAPTCHA_SECRET_KEY = privateSettings.recaptcha.secretKey;
+
 
   const mailData = {
     from: SENDER_MAIL_USERNAME,
@@ -251,15 +262,6 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   };
 
   try {
-    if (RECAPTCHA_SECRET_KEY && secretKey !== RECAPTCHA_SECRET_KEY) {
-      const recaptchaRes = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptcha}`, { method: 'POST' });
-      const json = await recaptchaRes.json();
-
-      if (json.success !== undefined && !json.success) {
-        return NextResponse.json({ error: 'Bot detected', message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
-      }
-    }
-
     // First send mail to reciever
     await sendNodeMailer(sender, clientData);
     // Then send mail to sender
@@ -281,7 +283,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
 export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_username }: IpostWpMail & { req: Request }) => {
   const { searchParams } = new URL(req.url);
-  const { id, email_reciever } = Object.fromEntries(searchParams);
+  const { id, email_reciever, secretKey } = Object.fromEntries(searchParams);
 
   const body = {
     recipientId: id,
@@ -296,6 +298,7 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
     senderId: id,
     mail_subject: 'Test',
     recaptcha: 'Test',
+    secretKey
   };
 
   return postWpMail({
