@@ -93,7 +93,7 @@ interface EmailMessage {
   };
 
   /** Extra confirmation data for the client */
-  dataGetter: {
+  dataReciever: {
     id: string[];    // Array of unique identifiers for data retrieval
     subject: string; // Subject for data retrieval
     content: string; // Content for data retrieval
@@ -160,7 +160,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     recaptcha,
     secretKey,
     sender,
-    dataGetter,
+    dataReciever,
     confirmation,
   } = body as EmailMessage;
 
@@ -208,14 +208,14 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
   // Important otherwise the mail reciever will not get any emails
   // We will use filter here since more than one mail reciever can be used
-  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataGetter.id.includes(String(smtpAccount.databaseId)));
+  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataReciever.id.includes(String(smtpAccount.databaseId)));
 
   if (!getSmtpAccountMailSender) {
     return NextResponse.json({ message: `SMTP account mail reciever not found. Check under SMTP accounts if a post with ${sender.id} ID exist.` }, { status: 500 });
   }
 
   if (!getSmtpAccountMailReciever) {
-    return NextResponse.json({ message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataGetter.id[0]} ID exist.` }, { status: 500 });
+    return NextResponse.json({ message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataReciever.id[0]} ID exist.` }, { status: 500 });
   }
 
   const {
@@ -257,8 +257,8 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   const messageSubject = confirmation.subject .replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
   const message = confirmation.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
 
-  const messageRecipientSubject = dataGetter.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
-  const messageRecipient = dataGetter.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);[]
+  const messageRecipientSubject = dataReciever.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  const messageRecipient = dataReciever.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);[]
 
   const mailData = {
     from: SENDER_MAIL_USERNAME,
@@ -308,12 +308,12 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
     sender: {
       id,
     },
-    dataGetter: {
-      id: [id],
+    confirmation: {
       subject: 'Test',
       content: 'Test',
     },
-    confirmation: {
+    dataReciever: {
+      id: [id],
       subject: 'Test',
       content: 'Test',
     },
