@@ -139,6 +139,8 @@ const fetchPrivateSettings = async ({ api_url, token }: { token: string, api_url
   return data;
 }
 
+
+
 export const postWpMail = async ({ api_url, req, WORDPRESS_USERNAME, WORDPRESS_PASSWORD }: IpostWpMail & { req: Request }) => {
   const body = await req.json();
 
@@ -277,3 +279,29 @@ export const postWpMail = async ({ api_url, req, WORDPRESS_USERNAME, WORDPRESS_P
     return NextResponse.json({ error: error.message, message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
   }
 }
+
+export const testWpMail = async ({ api_url, req, WORDPRESS_PASSWORD, WORDPRESS_USERNAME }: IpostWpMail & { req: Request }) => {
+  const { searchParams } = new URL(req.url);
+  const { id, email_reciever } = Object.fromEntries(searchParams);
+
+  const body = {
+    mail_reciever_id: id,
+    mail: {
+      email: email_reciever,
+      name: 'Test',
+      message: 'Test',
+    },
+    subject: 'Test',
+    confirmationMail: 'Test',
+    confirmationMailReciever: 'Test',
+    mail_sender_id: id,
+    mail_subject: 'Test',
+    recaptcha: 'Test',
+  };
+
+  return postWpMail({
+    api_url, WORDPRESS_PASSWORD, WORDPRESS_USERNAME,
+    req: { json: () => Promise.resolve({ body }) } as any,
+  });
+}
+
