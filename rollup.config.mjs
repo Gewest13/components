@@ -55,7 +55,6 @@ const addDeclaration = ({ pathTs, componentName }) => ({
   external: [/\.(css|less|scss)$/],
 });
 
-
 export default [
   baseConfig,
   addConfig({ componentName: 'Image', path: 'src/components/Image/Image.tsx', pathCss: 'src/components/Image/Image.module.scss' }),
@@ -65,6 +64,7 @@ export default [
   addConfig({ componentName: 'fetchWordpress', path: 'src/functions/fetchWordpress.ts' }),
   addConfig({ componentName: 'draftModeWordpress', path: 'src/functions/draftModeWordpress.ts' }),
   addConfig({ componentName: 'margin', path: 'src/functions/margin.ts' }),
+  addConfig({ componentName: 'wpMail', path: 'src/functions/wpMail.ts' }),
   addDeclaration({ componentName: 'Image', pathTs: 'dist/components/Image/Image.d.ts' }),
   addDeclaration({ componentName: 'Video', pathTs: 'dist/components/Video/Video.d.ts' }),
   addDeclaration({ componentName: 'Swiper', pathTs: 'dist/components/Swiper/Swiper.d.ts' }),
@@ -72,12 +72,7 @@ export default [
   addDeclaration({ componentName: 'fetchWordpress', pathTs: 'dist/functions/fetchWordpress.d.ts' }),
   addDeclaration({ componentName: 'draftModeWordpress', pathTs: 'dist/functions/draftModeWordpress.d.ts' }),
   addDeclaration({ componentName: 'margin', pathTs: 'dist/functions/margin.d.ts' }),
-  {
-    input: `dist/components/Image/Image.d.ts`,
-    output: [{ file: "dist/Image.d.ts", format: "esm" }],
-    plugins: [dts()],
-    external: [/\.(css|less|scss)$/],
-  },
+  addDeclaration({ componentName: 'wpMail', pathTs: 'dist/functions/wpMail.d.ts' }),
   {
     input: `dist/index.d.ts`,
     output: [{ file: "dist/index.d.ts", format: "esm" }],

@@ -136,8 +136,6 @@ const fetchPrivateSettings = async ({ api_url, token }: { token: string, api_url
   return data;
 }
 
-
-
 export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_password }: IpostWpMail & { req: Request }) => {
   const body = await req.json();
 
