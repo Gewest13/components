@@ -1,38 +1,35 @@
 
 // rollup.config.js
 import commonjs from "@rollup/plugin-commonjs";
-// import multi from '@rollup/plugin-multi-entry';
+import multi from '@rollup/plugin-multi-entry';
 import resolve from "@rollup/plugin-node-resolve";
 import terser from '@rollup/plugin-terser';
-// import merge from 'deepmerge';
 import dts from "rollup-plugin-dts";
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from "rollup-plugin-postcss";
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 import typescript from 'rollup-plugin-typescript2';
 
-// const baseConfig = {
-//   input: [
-//     'src/functions/**.ts',
-//     'src/utils/**.ts',
-//     'src/components/**.ts',
-//     'src/hooks/**.ts',
-//   ],
-//   output: [{
-//     preserveModules: true,
-//     dir: 'dist',
-//     format: "esm",
-//   }],
-//   plugins: [
-//     // typescript({ tsconfig: "./tsconfig.json", rootDir: "src" }),
-//     // multi({	entryFileName: 'index.js' }),
-//     // peerDepsExternal(),
-//     // resolve(),
-//     // preserveDirectives(),
-//     // terser(),
-//     // commonjs(),
-//   ]
-// };
+const baseConfig = {
+  input: [
+    'src/index.ts',
+  ],
+  output: [{
+    preserveModules: true,
+    dir: 'dist',
+    format: "esm",
+  }],
+  plugins: [
+    typescript({ tsconfig: "./tsconfig.json", rootDir: "src" }),
+    multi({	entryFileName: 'index.js' }),
+    peerDepsExternal(),
+    postcss({ modules: true, extract: true }),
+    resolve(),
+    preserveDirectives(),
+    terser(),
+    commonjs(),
+  ]
+};
 
 const addConfig = ({ componentName, path, pathCss }) => ({
   input: path,
@@ -41,17 +38,26 @@ const addConfig = ({ componentName, path, pathCss }) => ({
     format: 'esm',
   },
   plugins: [
-    typescript({ tsconfig: "./tsconfig.json", rootDir: "src" }),
+    typescript(),
     pathCss ? postcss({ modules: true, extract: true, include: pathCss }) : null,
     peerDepsExternal(),
     resolve(),
     preserveDirectives(),
     terser(),
     commonjs(),
-  ]
+  ],
 });
 
+const addDeclaration = ({ pathTs, componentName }) => ({
+  input: pathTs,
+  output: [{ file: `dist/${componentName}.d.ts`, format: "esm" }],
+  plugins: [dts()],
+  external: [/\.(css|less|scss)$/],
+});
+
+
 export default [
+  baseConfig,
   addConfig({ componentName: 'Image', path: 'src/components/Image/Image.tsx', pathCss: 'src/components/Image/Image.module.scss' }),
   addConfig({ componentName: 'Video', path: 'src/components/Video/Video.tsx', pathCss: 'src/components/Video/Video.module.scss' }),
   addConfig({ componentName: 'Swiper', path: 'src/components/Swiper/Swiper.tsx', pathCss: 'src/components/Swiper/Swiper.module.scss' }),
@@ -59,6 +65,19 @@ export default [
   addConfig({ componentName: 'fetchWordpress', path: 'src/functions/fetchWordpress.ts' }),
   addConfig({ componentName: 'draftModeWordpress', path: 'src/functions/draftModeWordpress.ts' }),
   addConfig({ componentName: 'margin', path: 'src/functions/margin.ts' }),
+  addDeclaration({ componentName: 'Image', pathTs: 'dist/components/Image/Image.d.ts' }),
+  addDeclaration({ componentName: 'Video', pathTs: 'dist/components/Video/Video.d.ts' }),
+  addDeclaration({ componentName: 'Swiper', pathTs: 'dist/components/Swiper/Swiper.d.ts' }),
+  addDeclaration({ componentName: 'ColumnsContainer', pathTs: 'dist/components/ColumnsContainer/ColumnsContainer.d.ts' }),
+  addDeclaration({ componentName: 'fetchWordpress', pathTs: 'dist/functions/fetchWordpress.d.ts' }),
+  addDeclaration({ componentName: 'draftModeWordpress', pathTs: 'dist/functions/draftModeWordpress.d.ts' }),
+  addDeclaration({ componentName: 'margin', pathTs: 'dist/functions/margin.d.ts' }),
+  {
+    input: `dist/components/Image/Image.d.ts`,
+    output: [{ file: "dist/Image.d.ts", format: "esm" }],
+    plugins: [dts()],
+    external: [/\.(css|less|scss)$/],
+  },
   {
     input: `dist/index.d.ts`,
     output: [{ file: "dist/index.d.ts", format: "esm" }],
@@ -66,12 +85,3 @@ export default [
     external: [/\.(css|less|scss)$/],
   }
 ];
-
-// {
-//   input: [
-//     'src/**.ts',
-//   ],
-//   output: [{ file: "dist/index.d.ts", format: "esm" }],
-//   plugins: [dts()],
-//   external: [/\.(css|less|scss)$/],
-// },
