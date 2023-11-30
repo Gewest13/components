@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ReactNode, ElementType, forwardRef, isValidElement, cloneElement, createElement } from 'react';
 
 import styles from './ColumnsContainer.module.scss';
@@ -6,6 +8,7 @@ import { Grid } from '../../interface';
 
 export interface IColumnsContainerProps {
   Container: ReactNode | string | ElementType<any>;
+  className?: string
   oneRow?: boolean
   columns: {
     grids: Grid
@@ -29,12 +32,12 @@ const withForwardedRef = (Component: any) => {
 };
 
 export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProps>((props, ref) => {
-  const { Container, columns, oneRow = false, ...rest } = props;
+  const { Container, className, columns, oneRow = false, ...rest } = props;
 
   const ContainerWithRef = withForwardedRef(Container);
 
   return (
-    <ContainerWithRef ref={ref} {...rest}>
+    <ContainerWithRef className={className} ref={ref} {...rest}>
       {columns.map((column, index) => (
         <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''}${column.className ? ` ${column.className}` : ''}`} data-grid={true} key={index}>
           {column.component}
