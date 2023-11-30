@@ -83,7 +83,7 @@ interface IpostWpMail {
   wordpress_password: string;
 }
 
-interface EmailMessage {
+export interface EmailBody {
   /** Key-value pairs representing the content of the email */
   mail: { [key: string]: string };
 
@@ -162,7 +162,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     sender,
     dataReciever,
     confirmation,
-  } = body as EmailMessage;
+  } = body as EmailBody;
 
   const cookieStore = cookies();
 
@@ -313,7 +313,7 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
   const { searchParams } = new URL(req.url);
   const { id, email_reciever, secretKey } = Object.fromEntries(searchParams);
 
-  const body: EmailMessage = {
+  const body: EmailBody = {
     mail: {
       name: 'Test',
       email: email_reciever,
