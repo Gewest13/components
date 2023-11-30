@@ -3,7 +3,6 @@ import React, { useEffect, useRef } from "react";
 import { StoryFn } from "@storybook/react";
 
 import { ColumnsContainer } from "./ColumnsContainer";
-import Container from "./Container/Container";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -33,7 +32,7 @@ export const ImageComponent = Template.bind({});
 
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 ImageComponent.args = {
-  Container: <Container />,
+  Container: <div />,
   columns: [
     {
       grids: {
