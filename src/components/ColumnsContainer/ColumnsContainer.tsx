@@ -1,13 +1,11 @@
-'use client';
-
-import React, { forwardRef } from 'react';
+import React, { ReactNode, ElementType, forwardRef, isValidElement, cloneElement, createElement } from 'react';
 
 import styles from './ColumnsContainer.module.scss';
 import { cssColumRowVars } from '../../functions/grid';
 import { Grid } from '../../interface';
 
 export interface IColumnsContainerProps {
-  Container: React.ElementType
+  Container: ReactNode | string | ElementType<any>;
   oneRow?: boolean
   columns: {
     grids: Grid
@@ -15,20 +13,34 @@ export interface IColumnsContainerProps {
     component: React.ReactNode
   }[]
 }
+const withForwardedRef = (Component: any) => {
+  const ForwardedComponent = forwardRef<HTMLDivElement, any>((props, ref) => {
+    if (isValidElement(Component)) {
+      return cloneElement(Component, { ...props, ref });
+    } else if (typeof Component === 'string' || typeof Component === 'function') {
+      return createElement(Component, { ...props, ref });
+    }
+    return null;
+  });
 
-export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProps & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { Container = 'div', columns, oneRow, ...rest } = props;
+  ForwardedComponent.displayName = `WithForwardedRef(${Component.displayName || Component.name || 'Component'})`;
+
+  return ForwardedComponent;
+};
+
+export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProps>((props, ref) => {
+  const { Container, columns, oneRow = false, ...rest } = props;
+
+  const ContainerWithRef = withForwardedRef(Container);
 
   return (
-    <Container ref={ref} {...rest}>
-      {columns.map((column, index) => {
-        return (
-          <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''} ${column.className || ''}`} data-grid={true} key={index}>
-            {column.component}
-          </div>
-        )
-      })}
-    </Container>
+    <ContainerWithRef ref={ref} {...rest}>
+      {columns.map((column, index) => (
+        <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''}${column.className ? ` ${column.className}` : ''}`} data-grid={true} key={index}>
+          {column.component}
+        </div>
+      ))}
+    </ContainerWithRef>
   );
 });
 
