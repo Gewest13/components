@@ -3,41 +3,7 @@
 import { cookies, draftMode } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-
-export type FetchWordpress = {
-  api_url: string;
-  query: string;
-  token?: string;
-  variables?: {
-    [key: string]: string | {
-      [key: string]: string;
-    }
-  };
-};
-
-export const fetchWordpress = async ({ api_url, query, variables, token }: FetchWordpress) => {
-  const headers: any = {
-    'Content-Type': 'application/json',
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const response = await fetch(api_url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ query, variables }),
-  });
-
-  const json = await response.json();
-
-  if (json.errors) {
-    return json;
-  }
-
-  return json.data;
-};
+import { fetchWordpress } from './fetchWordpress';
 
 const loginMutation = `
   mutation LoginUser($input: LoginInput!) {
