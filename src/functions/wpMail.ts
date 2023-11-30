@@ -199,7 +199,10 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     const json = await recaptchaRes.json();
 
     if (json.success !== undefined && !json.success) {
-      return NextResponse.json({ error: 'Bot detected', message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
+      return NextResponse.json({
+        line: 203,
+        error: 'Bot detected', message: 'Something went wrong. Please contact the site administrator.'
+      }, { status: 500 });
     }
   }
 
@@ -232,7 +235,10 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   } = getSmtpAccountMailSender!;
 
   if (!SENDER_MAIL_PASSWORD || !SENDER_MAIL_PORT || !SENDER_MAIL_SERVER || !SENDER_MAIL_USERNAME) {
-    return NextResponse.json({ message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${sender.id}` }, { status: 500 });
+    return NextResponse.json({
+      line: 236,
+      message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${sender.id}`
+    }, { status: 500 });
   }
 
   const transport = (nodemailer as any).createTransport({
@@ -251,14 +257,18 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     console.log('Server is ready to take our messages');
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error, message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
+    return NextResponse.json({
+      line: 255,
+      error,
+      message: 'Something went wrong. Please contact the site administrator.'
+    }, { status: 500 });
   }
 
-  const messageSubject = confirmation.subject .replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  const messageSubject = confirmation.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
   const message = confirmation.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
 
   const messageRecipientSubject = dataReciever.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
-  const messageRecipient = dataReciever.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);[]
+  const messageRecipient = dataReciever.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
 
   const mailData = {
     from: SENDER_MAIL_USERNAME,
@@ -291,7 +301,11 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
       },
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message, message: 'Something went wrong. Please contact the site administrator.' }, { status: 500 });
+    return NextResponse.json({
+      line: 299,
+      error: error.message,
+      message: 'Something went wrong. Please contact the site administrator.'
+    }, { status: 500 });
   }
 };
 
