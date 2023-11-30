@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import { StoryFn } from "@storybook/react";
 
 import { ColumnsContainer } from "./ColumnsContainer";
+import Container from "./Container/Container";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -11,20 +12,35 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: StoryFn<typeof ColumnsContainer> = (args) => <ColumnsContainer {...args} />;
+const Template: StoryFn<typeof ColumnsContainer> = ({ ...rest }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log(ref);
+  }, []);
+
+  return(
+    <ColumnsContainer
+      {...rest}
+      Container={<div />}
+      ref={ref}
+    />
+  )
+};
 
 export const ImageComponent = Template.bind({});
 
+
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 ImageComponent.args = {
-  Container: 'div',
+  Container: <Container />,
   columns: [
     {
       grids: {
         desktop: { column: '1 / 4' },
         mobile: { column: '1 / -1' }
       },
-      component: <div>Test</div>
+      component: <div>Column 1</div>
     },
     {
       grids: {
@@ -32,7 +48,7 @@ ImageComponent.args = {
         mobile: { column: '1 / -1', row: '1 / 2' },
         tablet: { column: '1 / -1', row: '1 / 2' }
       },
-      component: <></>
+      component: <div>Column 2</div>
     },
   ]
 };
