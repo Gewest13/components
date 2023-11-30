@@ -94,7 +94,7 @@ interface EmailMessage {
 
   /** Extra confirmation data for the client */
   dataReciever: {
-    id: string[];    // Array of unique identifiers for data retrieval
+    id: string[]; // Array of unique identifiers for data retrieval
     subject: string; // Subject for data retrieval
     content: string; // Content for data retrieval
   };
@@ -201,7 +201,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     if (json.success !== undefined && !json.success) {
       return NextResponse.json({
         line: 203,
-        error: 'Bot detected', message: 'Something went wrong. Please contact the site administrator.'
+        error: 'Bot detected', message: 'Something went wrong. Please contact the site administrator.',
       }, { status: 500 });
     }
   }
@@ -211,7 +211,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
   // Important otherwise the mail reciever will not get any emails
   // We will use filter here since more than one mail reciever can be used
-  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataReciever.id.includes(String(smtpAccount.databaseId)));
+  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataReciever.id.map((id) => String(id)).includes(String(smtpAccount.databaseId)));
 
   if (!getSmtpAccountMailSender) {
     return NextResponse.json({ message: `SMTP account mail reciever not found. Check under SMTP accounts if a post with ${sender.id} ID exist.` }, { status: 500 });
@@ -237,7 +237,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   if (!SENDER_MAIL_PASSWORD || !SENDER_MAIL_PORT || !SENDER_MAIL_SERVER || !SENDER_MAIL_USERNAME) {
     return NextResponse.json({
       line: 236,
-      message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${sender.id}`
+      message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${sender.id}`,
     }, { status: 500 });
   }
 
@@ -260,7 +260,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     return NextResponse.json({
       line: 255,
       error,
-      message: 'Something went wrong. Please contact the site administrator.'
+      message: 'Something went wrong. Please contact the site administrator.',
     }, { status: 500 });
   }
 
@@ -273,16 +273,16 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   const mailData = {
     from: SENDER_MAIL_USERNAME,
     to: getSmtpAccountMailReciever!.map(({ smtpAccount }) => smtpAccount.acfSmtp.username),
-    subject: messageSubject,
-    text: message,
-    html: message,
+    subject: messageRecipientSubject,
+    html: messageRecipient,
   };
 
   const clientData = {
     from: SENDER_MAIL_USERNAME,
     to: mail.email,
-    subject: messageRecipientSubject,
-    html: messageRecipient,
+    subject: messageSubject,
+    text: message,
+    html: message,
   };
 
   try {
@@ -304,7 +304,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     return NextResponse.json({
       line: 299,
       error: error.message,
-      message: 'Something went wrong. Please contact the site administrator.'
+      message: 'Something went wrong. Please contact the site administrator.',
     }, { status: 500 });
   }
 };
