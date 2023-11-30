@@ -181,7 +181,7 @@ export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) =
 
   // Handle mouse up event
   const handleMouseUp = () => {
-    swiperRef.current?.classList.remove('active');
+    swiperRef.current?.classList.remove(styles.active);
     state.isDragging = false;
     state.offX = state.currentX;
 
@@ -211,7 +211,7 @@ export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) =
     state.xPos = e.pageX;
 
     if (Math.abs(state.onX - clientX) > 20) {
-      swiperRef.current?.classList.add('active');
+      swiperRef.current?.classList.add(styles.active);
     }
 
     state.currentX = state.offX + (clientX - state.onX) * state.speed;
