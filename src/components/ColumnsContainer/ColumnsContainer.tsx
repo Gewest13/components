@@ -3,15 +3,52 @@ import React, { forwardRef } from 'react';
 import styles from './ColumnsContainer.module.scss';
 import { createContainer } from '../../functions/createContainer';
 import { cssColumRowVars } from '../../functions/grid';
-import { Grid } from '../../interface';
+import { ColumnGrid } from '../../interface';
 
+/**
+ * Interface defining the props for the ColumnsContainer component.
+ */
 export interface IColumnsContainerProps {
+  /**
+   * The container element or component.
+   * @default 'div'
+   * @example
+   * <Container desktopRow={60} />
+   * Container
+   * <div />
+   */
   Container: React.ReactElement<HTMLDivElement> | React.ForwardRefExoticComponent<any | React.RefAttributes<HTMLDivElement>>;
+  /** Flag to specify if the layout should be in one row. */
   oneRow?: boolean;
+  /** Additional className for custom styling. */
   className?: string;
+  /**
+   * Array of column definitions with grids, className, and component.
+   * @example
+   * [{
+   *   grids: { mobile: { column: '1 / -1', row: '1 / 2' }, desktop: { column: '1 / 4', row: '1 / 3' } },
+   *   className: 'custom-class',
+   *   component: <MyComponent />
+   * }]
+   */
   columns: {
-    grids: Grid;
+    /**
+     * @example
+     * { desktop: { column: '1 / -1', row: '1 / 2' },  tablet: {}, mobile: { column: '1 / 4' } }
+     */
+    grids: ColumnGrid;
+    /**
+     * @example
+     * 'custom-class'
+     *
+     * @example
+     * styles.customClass
+     */
     className?: string;
+    /**
+     * @example
+     * <MyComponent />
+     */
     component: React.ReactNode;
   }[];
 }

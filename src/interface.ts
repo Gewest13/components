@@ -12,6 +12,7 @@ export interface Margins {
   desktop?: [number, number, number, number];
 }
 
+
 export interface Grids {
   /** Grid for mobile devices */
   mobile?: string;
@@ -21,20 +22,20 @@ export interface Grids {
   desktop?: string;
 }
 
-export type Grid = {
-  mobile: {
-    column: string;
-    row?: string;
-  },
-  tablet?: {
-    column: string;
-    row?: string;
-  },
+export type ColumnGrid = {
   desktop: {
     column: string;
     row?: string;
   }
-}
+  tablet?: {
+    column: string;
+    row?: string;
+  },
+  mobile: {
+    column: string;
+    row?: string;
+  },
+};
 
 export interface FileSource {
   /** URL of the File source for desktop devices */

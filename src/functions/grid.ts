@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Grids, Grid } from "../interface";
+import { Grids, ColumnGrid } from "../interface";
 
 export const cssGridsVars = (grids?: Grids) => grids && Object.keys(grids).reduce((acc, key) => {
   // @ts-ignore if someone can fix this issue, please do
@@ -11,7 +11,7 @@ type LenientCSSProperties = React.CSSProperties & {
   [key: string]: string | undefined;
 }
 
-export const cssColumRowVars = (grid?: Grid): LenientCSSProperties | undefined => {
+export const cssColumRowVars = (grid?: ColumnGrid): LenientCSSProperties | undefined => {
   if (!grid) return undefined;
 
   return (['mobile', 'tablet', 'desktop'] as const).reduce((acc: LenientCSSProperties, device) => {
