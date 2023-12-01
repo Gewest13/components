@@ -226,7 +226,38 @@ Description for the ratios function.
 Description for the vwsize function.
 
 ### wpMail
-Description for the wpMail function.
+Recommended import:
+```javascript
+import { wpMail } from '@gewest13/components/dist/wpMail';
+```
+Example:
+```jsx
+// Path: app/api/mail/route.ts
+import { WORDPRESS_API_URL } from 'config';
+import { testWpMail, postWpMail } from '@gewest13/components/dist/wpMail';
+
+export async function GET(req: any) {
+  return testWpMail({
+    req,
+    api_url: WORDPRESS_API_URL,
+    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
+    // DONT USE THE PUBLIC_ PREFIX
+    wordpress_username: process.env.WORDPRESS_USERNAME!,
+    wordpress_password: process.env.WORDPRESS_PASSWORD!,
+  });
+}
+
+export async function POST(req: any) {
+  return postWpMail({
+    req,
+    api_url: WORDPRESS_API_URL,
+    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
+    // DONT USE THE PUBLIC_ PREFIX
+    wordpress_username: process.env.WORDPRESS_USERNAME!,
+    wordpress_password: process.env.WORDPRESS_PASSWORD!,
+  });
+}
+```
 
 ## Utils
 
