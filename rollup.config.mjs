@@ -67,6 +67,7 @@ export default [
   addConfig({ componentName: 'draftModeWordpress', path: 'src/functions/draftModeWordpress.ts' }),
   addConfig({ componentName: 'margin', path: 'src/functions/margin.ts' }),
   addConfig({ componentName: 'wpMail', path: 'src/functions/wpMail.ts' }),
+  addConfig({ componentName: 'getRelationshipData', path: 'src/functions/getRelationshipData.ts' }),
   addDeclaration({ componentName: 'Image', pathTs: 'dist/components/Image/Image.d.ts' }),
   addDeclaration({ componentName: 'Video', pathTs: 'dist/components/Video/Video.d.ts' }),
   addDeclaration({ componentName: 'Swiper', pathTs: 'dist/components/Swiper/Swiper.d.ts' }),
@@ -77,6 +78,7 @@ export default [
   addDeclaration({ componentName: 'draftModeWordpress', pathTs: 'dist/functions/draftModeWordpress.d.ts' }),
   addDeclaration({ componentName: 'margin', pathTs: 'dist/functions/margin.d.ts' }),
   addDeclaration({ componentName: 'wpMail', pathTs: 'dist/functions/wpMail.d.ts' }),
+  addDeclaration({ componentName: 'getRelationshipData', pathTs: 'dist/functions/getRelationshipData.d.ts' }),
   {
     input: `dist/index.d.ts`,
     output: [{ file: "dist/index.d.ts", format: "esm" }],
