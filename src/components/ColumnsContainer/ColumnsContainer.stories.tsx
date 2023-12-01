@@ -35,7 +35,6 @@ const Template: StoryFn<typeof ColumnsContainer> = ({ ...rest }) => {
 
 export const ImageComponent = Template.bind({});
 
-
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 ImageComponent.args = {
   Container: <div />,

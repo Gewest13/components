@@ -15,6 +15,31 @@ export interface IVideoProps extends HTMLAttributes<HTMLVideoElement> {
   'data-viewport'?: string;
 }
 
+/**
+ * Video is a React component that renders a video element with additional styling and functionalities.
+ *
+ * @param props - The properties passed to the component:
+ *   - `ratio`: Aspect ratio of the video.
+ *   - `src`: Source file of the video.
+ *   - `className`: Additional className for custom styling.
+ *   - `margins`: Margins to be applied to the video container.
+ *   - `controls`: Controls whether the video should have playback controls.
+ *   - `preload`: Specifies how the video should be preloaded. Options are "none", "metadata", or "auto".
+ *   - `data-viewport`: Custom data attribute for viewport-specific behavior.
+ * @param ref - Ref forwarded to the video element.
+ * @returns A React element representing the video.
+ *
+ * @example
+ * <Video
+ *   ratio={[16, 9]}
+ *   src={{ mediaItemUrl: 'video-url.mp4' }}
+ *   className="custom-video-class"
+ *   margins={{ top: '10px', bottom: '10px' }}
+ *   controls
+ *   preload="auto"
+ *   data-viewport="desktop"
+ * />
+ */
 export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
   const { ratio, src, className, margins, 'data-viewport': viewport, ...rest } = props;
 
@@ -42,6 +67,27 @@ export interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTML
   videoAttributes?: React.HTMLAttributes<HTMLVideoElement>;
 }
 
+/**
+ * VideoComponent is a React component that renders a responsive video container, which can adapt to different screen sizes.
+ *
+ * @param props - The properties passed to the component:
+ *   - `ratios`: Aspect ratios for different screen sizes.
+ *   - `src`: Source files for different screen sizes.
+ *   - `margins`: Margins to be applied to the video container.
+ *   - `videoAttributes`: Additional attributes for the video element.
+ *   - `children`: Child elements to be rendered within the video component.
+ * @param ref - Ref forwarded to the container.
+ * @returns A React element representing the video container.
+ *
+ * @example
+ * <VideoComponent
+ *   src={{ mobile: mobileSrc, tablet: tabletSrc, desktop: desktopSrc }}
+ *   ratios={{ mobile: [4, 3], tablet: [16, 9], desktop: [21, 9] }}
+ *   margins={{ top: '15px', bottom: '15px' }}
+ * >
+ *   <div>Additional Content</div>
+ * </VideoComponent>
+ */
 export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps>((props, ref) => {
   const { ratios, src, margins, videoAttributes, children, ...rest } = props;
 
@@ -134,6 +180,25 @@ export type ImperativeFullVideoRef = {
   fullVideoRef: HTMLVideoElement;
 }
 
+/**
+ * FullVideo is a React component that provides a full-screen video experience with additional control methods.
+ *
+ * @param props - The properties passed to the component:
+ *   - `srcFull`: Source for the full video.
+ *   - `disableFullScreenHandling`: Indicates whether the full-screen handling is disabled.
+ *   - `children`: Child elements to be rendered within the full video component.
+ *   - `fullVideoAttributes`: Additional HTML attributes for the full video element.
+ * @param ref - Ref object for accessing imperative methods.
+ * @returns A React element representing the full-screen video.
+ *
+ * @example
+ * <FullVideo
+ *   srcFull={{ mediaItemUrl: 'full-screen-video-url.mp4' }}
+ *   disableFullScreenHandling={false}
+ * >
+ *   <p>Additional Content</p>
+ * </FullVideo>
+ */
 export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, ref) => {
   const { disableFullScreenHandling, fullVideoAttributes, srcFull, className, children, ...rest } = props;
 

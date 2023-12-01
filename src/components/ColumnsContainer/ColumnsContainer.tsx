@@ -39,10 +39,7 @@ export interface IColumnsContainerProps {
     grids: ColumnGrid;
     /**
      * @example
-     * 'custom-class'
-     *
-     * @example
-     * styles.customClass
+     * 'custom-class' or styles.customClass
      */
     className?: string;
     /**
