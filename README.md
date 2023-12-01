@@ -30,19 +30,19 @@ Gewest13 Library Shared Components is a curated repository of reusable UI assets
 ## Components
 
 ### ColumnsContainer
-Recommended Import
+#### Recommended Import:
 ```javascript
 import { ColumnsContainer } from '@gewest13/components/dist/ColumnsContainer';
 ```
-Layout.tsx or App.tsx
+#### Layout.tsx or App.tsx:
 ```javascript
 import '@gewest13/components/dist/ColumnsContainer.css';
 ```
-Alternative Import
+#### Alternative Import:
 ```javascript
 import { ColumnsContainer } from "@gewest13/components";
 ```
-Example
+#### Example:
 ```jsx
 <ColumnsContainer
   // Optionally, specify a custom grid container
