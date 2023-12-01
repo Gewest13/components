@@ -44,7 +44,7 @@ import '@gewest13/components/dist/ColumnsContainer.css';
 import { ColumnsContainer } from "@gewest13/components";
 ```
 
-##### Usage
+##### Example
 
 ```jsx
 <ColumnsContainer
