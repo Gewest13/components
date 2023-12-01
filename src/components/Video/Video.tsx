@@ -1,195 +1,305 @@
-import React, { HTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+# Gewest13 components
+Gewest13 Library Shared Components is a curated repository of reusable UI assets used by Gewest13. Designed to enhance development efficiency and promote consistency, these components serve as valuable resources for streamlining application creation.
 
-import styles from './Video.module.scss'
-import { cssMarginVars } from '../../functions/margin';
-import { cssRatioVar } from '../../functions/ratios';
-import { IFileComponent, Margins, TFile } from '../../interface';
+## Table of Contents
 
-export interface IVideoProps extends HTMLAttributes<HTMLVideoElement> {
-  ratio: [number, number];
-  src: TFile;
-  className?: string;
-  margins?: Margins;
-  controls?: boolean;
-  preload?: "none" | "metadata" | "auto";
-  'data-viewport'?: string;
+1. **Components**
+   - [ColumnsContainer](#columnscontainer)
+   - [Image](#image)
+   - [RecaptchaV3](#recaptchav3)
+   - [SharedForm](#sharedform)
+   - [Swiper](#swiper)
+   - [Video](#video)
+
+2. **Hooks**
+   - [useWindowSize](#usewindowsize)
+
+3. **Functions**
+   - [createContainer](#createcontainer)
+   - [draftModeWordpress](#draftmodewordpress)
+   - [fetchWordpress](#fetchwordpress)
+   - [grid](#grid)
+   - [margin](#margin)
+   - [ratios](#ratios)
+   - [vwsize](#vwsize)
+   - [wpMail](#wpmail)
+
+4. **Utils**
+   - [lerp](#lerp)
+
+# Components
+Components can be imported individually, or you have the option to import all components at once using the root file index.js. Additionally, you can include the main CSS file named index.css, which is situated within @gewest13/components/dist/index.css. However, for optimal organization, it is recommended to import each CSS file separately for the specific components you are utilizing.
+
+### ColumnsContainer
+Recommended import:
+```javascript
+import { ColumnsContainer } from '@gewest13/components/dist/ColumnsContainer';
+```
+Css import:
+```javascript
+import '@gewest13/components/dist/ColumnsContainer.css';
+```
+Example:
+```jsx
+<ColumnsContainer
+  // Optionally, specify a custom grid container
+  Container={Container}
+  // Define the columns in your grid layout
+  columns={[
+    {
+      // Define the grid columns for different screen sizes
+      grids: { 
+        desktop: { column: '3 / 5' }, 
+        tablet: { column: '3 / 5' }, 
+        mobile: { column: '4 / -4' }
+      },
+      // Specify the component to render inside the column
+      component: (
+        <Typography mobileMargin={[0, 0, 40, 0]} size="typo-24" tag="h3">
+          {heading}
+        </Typography>
+      ),
+    }
+  ]}
+/>
+```
+
+### Image
+Recommended import:
+```javascript
+import { Image } from '@gewest13/components/dist/Image';
+```
+Css import:
+```javascript
+import '@gewest13/components/dist/Image.css';
+```
+Example:
+```jsx
+<Image
+  src={{
+    desktop: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    tablet: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    mobile: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+  }}
+  ratios={{ desktop: [1680, 1800], tablet: [840, 900], mobile: [432, 720] }}
+/>
+```
+
+### RecaptchaV3
+Recommended import:
+```javascript
+import { RecaptchaV3, getToken } from '@gewest13/components/dist/RecaptchaV3';
+```
+Example:
+```jsx
+// Recaptcha is the recaptcha site key from the google recaptcha admin
+<RecaptchaV3 recaptcha={recaptcha} />
+```
+
+### SharedForm
+Recommended import:
+```javascript
+import { SharedForm } from '@gewest13/components/dist/SharedForm';
+```
+Important:
+> ⚠️ To use this shared form you should first import the [wpMail](#wpmail) function.
+
+Example:
+```jsx
+<SharedForm
+  // Best practice to spread props from wordpress
+  Container={<form className="example" />}
+  confirmationSubject="Confirmation Subject"
+  confirmationPreviewText="Confirmation Preview Text"
+  confirmationEmail="<p>Hey {{firstname}}</p>"
+  // React email template here
+  confirmationEmailTemplate={null}
+  dataRecieverSubject="Data Receiver Subject"
+  dataRecieverPreviewText="Data Receiver Preview Text"
+  dataRecieverEmail="<p>First name: {{firstname}}</p>"
+  mailReciever={{ databaseId: [1, 2, 3] }}
+  mailSender={{ databaseId: 4 }}
+  recaptcha_site_key={recaptcha}
+  onSubmit={handleFormSubmit}
+  onSuccessfulSubmit={handleSuccessfulSubmit}
+  onFailedSubmit={handleFailedSubmit}
+  debug={true}
+>
+  <label htmlFor="textInput">
+    Enter Text:
+    <input
+      type="text"
+      id="textInput"
+      value=""
+    />
+  </label>
+  {/* Add other form elements as needed */}
+</SharedForm>
+```
+
+### Swiper
+Recommended import:
+```javascript
+import { Swiper, SwiperCard } from '@gewest13/components/dist/Swiper';
+```
+Css import:
+```javascript
+import '@gewest13/components/dist/Swiper.css';
+```
+Example:
+```jsx
+<SharedSwiper>
+  {slides && slides.map((slide, index) => (
+    // Add width and height here
+    <SwiperCard className={styles.slideCard} key={index}>
+      {slide}
+    </SwiperCard>
+  ))}
+</SharedSwiper>
+```
+
+### Video
+Recommended import:
+```javascript
+import { Video, VideoComponent, FullVideo } from '@gewest13/components/dist/Video';
+```
+Css import:
+```javascript
+import '@gewest13/components/dist/Video.css';
+```
+Example:
+```jsx
+<Video
+  src={{mediaItemUrl: 'placeholder.jpg', altText: 'placeholder'}}
+  ratio={[1600, 900]}
+/>  
+
+<VideoComponent
+  src={{
+    desktop: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    tablet: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    mobile: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+  }}
+  ratios={{ desktop: [1680, 1800], tablet: [840, 900], mobile: [432, 720] }}
+/>
+
+<FullVideo 
+  ref={videoRef} 
+  disableFullScreenHandling 
+  srcFull={fullVideo} 
+  className={styles.video} 
+  ratios={{ desktop: [1680, 945] }} 
+  src={{ desktop: videoLoop }}
+>
+  {fullVideo && (
+    <button onClick={() => videoRef.current.playFullScreen()}>Play movie</button>
+  )}
+</FullVideo>
+```
+
+## Hooks
+
+### useWindowSize
+Description for the useWindowSize hook.
+
+## Functions
+
+### createContainer
+Description for the createContainer function.
+
+### draftModeWordpress
+Recommended import:
+```javascript
+import { draftModeWordpress } from '@gewest13/components/dist/draftModeWordpress';
+```
+Example:
+```jsx
+// Path: app/api/preview/route.ts
+import { WORDPRESS_API_URL } from 'config';
+import { draftModeWordpress } from '@gewest13/components/dist/draftModeWordpress';
+
+export async function GET(req: any) {
+  // When going to /api/preview?uri=1234
+  // uri should be the databaseId of the post
+  return draftModeWordpress({
+    req,
+    api_url: WORDPRESS_API_URL,
+  });
 }
+```
+```
+// Path: inside the root on app level ~/middleware.ts
+import { NextRequest, NextResponse } from 'next/server';
 
-export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
-  const { ratio, src, className, margins, 'data-viewport': viewport, ...rest } = props;
-
-  return (
-    <div data-viewport={viewport} data-margin={!!margins} style={{ ...cssRatioVar(ratio), ...cssMarginVars(margins) }} className={`${className || ' '} ${styles.videoWrap}`}>
-      <video
-        data-viewport={viewport}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className={styles.video}
-        src={src.mediaItemUrl}
-        ref={ref}
-        {...rest}
-      />
-    </div>
-  );
-});
-
-Video.displayName = 'Video';
-
-export interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  videoAttributes?: React.HTMLAttributes<HTMLVideoElement>;
-}
-
-export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps>((props, ref) => {
-  const { ratios, src, margins, videoAttributes, children, ...rest } = props;
-
-  const hasOneVideo = Object.keys(src).length === 1;
-
-  return (
-    <div data-margin={!!margins} style={cssMarginVars(margins)} ref={ref} { ...rest}>
-      {children && children}
-      {src.mobile && ratios.mobile && (
-        <Video data-viewport={`${!hasOneVideo ? 'mobile' : ''}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
-      )}
-      {src.tablet && ratios.tablet && (
-        <Video data-viewport={`${!hasOneVideo ? 'tablet' : ''}`} src={src.tablet} ratio={ratios.tablet} {...videoAttributes}  />
-      )}
-      {src.desktop && ratios.desktop && (
-        <Video data-viewport={`${!hasOneVideo ? 'desktop' : ''}`} src={src.desktop} ratio={ratios.desktop} {...videoAttributes}  />
-      )}
-    </div>
-  );
-});
-
-VideoComponent.displayName = 'VideoComponent';
-interface CustomDocument extends Document {
-  webkitIsFullScreen?: boolean;
-  mozFullScreen?: boolean;
-  msFullscreenElement?: Element | null;
-  webkitFullscreenElement?: boolean
-}
-
-interface CustomVideoElement extends HTMLVideoElement {
-  mozRequestFullscreen?: () => Promise<void>;
-  webkitRequestFullscreen?: () => Promise<void>;
-  msRequestFullscreen?: () => Promise<void>;
-  webkitEnterFullScreen?: () => Promise<void>;
-}
-
-const requestFullScreen = (video: CustomVideoElement) => {
-  const requestFullscreenFunction = video.requestFullscreen
-    || video.mozRequestFullscreen
-    || video.webkitRequestFullscreen
-    || video.webkitEnterFullScreen
-    || video.msRequestFullscreen;
-  requestFullscreenFunction.call(video);
+export const config = {
+  matcher: ['/api/preview'],
 };
 
-const isFullScreen = () => {
-  const doc = document as unknown as CustomDocument;
-  return !!(
-    doc.fullscreenElement
-    || doc.webkitIsFullScreen
-    || doc.webkitFullscreenElement
-    || doc.mozFullScreen
-    || doc.msFullscreenElement
-  );
-};
+export async function middleware(req: NextRequest) {
+  const basicAuth = req.headers.get('authorization');
+  const url = req.nextUrl;
 
-export const enterFullScreen = (element: HTMLVideoElement) => {
-  if (!element) return;
+  if (basicAuth) {
+    const authValue = basicAuth.split(' ')[1];
+    const [user, pwd] = atob(authValue).split(':');
 
-  requestFullScreen(element);
-  element.play();
-}
-
-export const exitFullScreen = (element: HTMLVideoElement) => {
-  if (!element) return;
-
-  if (!isFullScreen()) {
-    element.pause()
-  }
-}
-
-export interface IFullVideo extends IFileComponent, React.HTMLAttributes<HTMLDivElement> {
-  /** Source for the full video */
-  srcFull?: TFile;
-
-  /** Indicates whether the full-screen handling is disabled */
-  disableFullScreenHandling?: boolean;
-
-  /** Child elements to be rendered within the full video component */
-  children?: React.ReactNode;
-
-  /** Additional HTML attributes for the full video element */
-  fullVideoAttributes?: HTMLAttributes<HTMLVideoElement>
-}
-
-export type ImperativeFullVideoRef = {
-  playFullScreen: () => void;
-  pauseFullScreen: () => void;
-  containerRef: HTMLDivElement | HTMLButtonElement | null;
-  fullVideoRef: HTMLVideoElement;
-}
-
-export const FullVideo = forwardRef<ImperativeFullVideoRef, IFullVideo>((props, ref) => {
-  const { disableFullScreenHandling, fullVideoAttributes, srcFull, className, children, ...rest } = props;
-
-  const fullVideoRef = useRef() as React.MutableRefObject<HTMLVideoElement>;
-  const divRef = useRef<React.ElementRef<'div'>>(null);
-  const buttonRef = useRef<React.ElementRef<'button'>>(null)
-
-  useEffect(() => {
-    if (disableFullScreenHandling) return;
-
-    const prefixes = ['', 'moz', 'webkit', 'ms'];
-
-    prefixes.forEach((prefix) =>
-      document.addEventListener(`${prefix}fullscreenchange`, () => exitFullScreen(fullVideoRef.current))
-    );
-  }, []);
-
-  useImperativeHandle(ref, () => ({
-    playFullScreen: () => {
-      if (!disableFullScreenHandling) return;
-
-      enterFullScreen(fullVideoRef.current);
-    },
-    pauseFullScreen: () => {
-      if (!disableFullScreenHandling) return;
-
-      exitFullScreen(fullVideoRef.current);
-    },
-    containerRef: divRef.current || buttonRef.current,
-    fullVideoRef: fullVideoRef.current,
-  }), [disableFullScreenHandling]);
-
-  // Someone fix this ugly code (it's not from Niels Reijnders)
-  if (disableFullScreenHandling) {
-    return (
-      <div ref={divRef} className={className}>
-        <VideoComponent {...rest} >
-          {srcFull && (
-            <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
-          )}
-        </VideoComponent>
-        {children}
-      </div>
-    );
+    return NextResponse.rewrite(`${url}&username=${user}&password=${encodeURIComponent(pwd)}`);
   }
 
-  return (
-    <button ref={buttonRef} className={className} onClick={() => enterFullScreen(fullVideoRef.current)}>
-      <VideoComponent {...rest} >
-        {srcFull && (
-          <Video className={styles.fullVideo} controls={true} preload="none" ref={fullVideoRef} ratio={[0, 0]} src={srcFull} {...fullVideoAttributes} />
-        )}
-      </VideoComponent>
-      {children}
-    </button>
-  );
-});
+  return NextResponse.rewrite(url, { status: 401 });
+}
+```
 
-FullVideo.displayName = 'FullVideo';
+### fetchWordpress
+Description for the fetchWordpress function.
+
+### grid
+Description for the grid function.
+
+### margin
+Description for the margin function.
+
+### ratios
+Description for the ratios function.
+
+### vwsize
+Description for the vwsize function.
+
+### wpMail
+Recommended import:
+```javascript
+import { wpMail } from '@gewest13/components/dist/wpMail';
+```
+Example:
+```jsx
+// Path: app/api/mail/route.ts
+import { WORDPRESS_API_URL } from 'config';
+import { testWpMail, postWpMail } from '@gewest13/components/dist/wpMail';
+
+export async function GET(req: any) {
+  return testWpMail({
+    req,
+    api_url: WORDPRESS_API_URL,
+    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
+    // DONT USE THE PUBLIC_ PREFIX
+    wordpress_username: process.env.WORDPRESS_USERNAME!,
+    wordpress_password: process.env.WORDPRESS_PASSWORD!,
+  });
+}
+
+export async function POST(req: any) {
+  return postWpMail({
+    req,
+    api_url: WORDPRESS_API_URL,
+    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
+    // DONT USE THE PUBLIC_ PREFIX
+    wordpress_username: process.env.WORDPRESS_USERNAME!,
+    wordpress_password: process.env.WORDPRESS_PASSWORD!,
+  });
+}
+```
+
+## Utils
+
+### lerp
+Description 
