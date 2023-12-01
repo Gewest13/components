@@ -30,28 +30,22 @@ Gewest13 Library Shared Components is a curated repository of reusable UI assets
 ## Components
 
 ### ColumnsContainer
-
-#### Installation
-To use the `ColumnsContainer` component, you need to import it into your project. There are two main ways to do this:
-​
 ##### Recommended Import
 ```javascript
 import { ColumnsContainer } from '@gewest13/components/dist/ColumnsContainer';
 ```
-Along with the component, you should also import its associated stylesheet to ensure proper styling:
+##### Layout.tsx or App.tsx
 ```javascript
 import '@gewest13/components/dist/ColumnsContainer.css';
 ```
-​
+
 ##### Alternative Import
-Alternatively, you can import the component directly from the main package:
 ```javascript
 import { ColumnsContainer } from "@gewest13/components";
 ```
-​
+
 ##### Usage
-The `ColumnsContainer` component is designed to be flexible and easy to use. Here is an example of how to use it in your application:
-​
+
 ```jsx
 <ColumnsContainer
   // Optionally, specify a custom grid container
