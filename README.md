@@ -27,22 +27,19 @@ Gewest13 Library Shared Components is a curated repository of reusable UI assets
 4. **Utils**
    - [lerp](#lerp)
 
-## Components
+# Components
+Components can be imported individually, or you have the option to import all components at once using the root file index.js. Additionally, you can include the main CSS file named index.css, which is situated within @gewest13/components/dist/index.css. However, for optimal organization, it is recommended to import each CSS file separately for the specific components you are utilizing.
 
 ### ColumnsContainer
-#### Recommended Import:
+Recommended Import:
 ```javascript
 import { ColumnsContainer } from '@gewest13/components/dist/ColumnsContainer';
 ```
-#### Layout.tsx or App.tsx:
+Css:
 ```javascript
 import '@gewest13/components/dist/ColumnsContainer.css';
 ```
-#### Alternative Import:
-```javascript
-import { ColumnsContainer } from "@gewest13/components";
-```
-#### Example:
+Example:
 ```jsx
 <ColumnsContainer
   // Optionally, specify a custom grid container
