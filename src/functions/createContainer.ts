@@ -172,6 +172,7 @@ Example:
 <Video
   src={{mediaItemUrl: 'placeholder.jpg', altText: 'placeholder'}}
   ratio={[1600, 900]}
+  className="video"
 />  
 
 <VideoComponent
@@ -183,16 +184,9 @@ Example:
   ratios={{ desktop: [1680, 1800], tablet: [840, 900], mobile: [432, 720] }}
 />
 
-<FullVideo 
-  ref={videoRef} 
-  disableFullScreenHandling 
-  srcFull={fullVideo} 
-  className={styles.video} 
-  ratios={{ desktop: [1680, 945] }} 
-  src={{ desktop: videoLoop }}
->
-  {fullVideo && (
-    <button onClick={() => videoRef.current.playFullScreen()}>Play movie</button>
+<FullVideo ref={videoRef} disableFullScreenHandling srcFull={fullVideo} className={styles.video} ratios={{ desktop: [1680, 945] }} src={{ desktop: videoLoop }}>
+  {buttonText && fullVideo && (
+    <BoxedButton onClick={() => videoRef.current.playFullScreen()} className={styles.mobileButton}>{buttonText}</BoxedButton>
   )}
 </FullVideo>
 ```
@@ -208,47 +202,7 @@ Description for the useWindowSize hook.
 Description for the createContainer function.
 
 ### draftModeWordpress
-Recommended import:
-```javascript
-import { draftModeWordpress } from '@gewest13/components/dist/draftModeWordpress';
-```
-Example:
-```jsx
-// Path: app/api/preview/route.ts
-import { WORDPRESS_API_URL } from 'config';
-import { draftModeWordpress } from '@gewest13/components/dist/draftModeWordpress';
-
-export async function GET(req: any) {
-  // When going to /api/preview?uri=1234
-  // uri should be the databaseId of the post
-  return draftModeWordpress({
-    req,
-    api_url: WORDPRESS_API_URL,
-  });
-}
-```
-```
-// Path: inside the root on app level ~/middleware.ts
-import { NextRequest, NextResponse } from 'next/server';
-
-export const config = {
-  matcher: ['/api/preview'],
-};
-
-export async function middleware(req: NextRequest) {
-  const basicAuth = req.headers.get('authorization');
-  const url = req.nextUrl;
-
-  if (basicAuth) {
-    const authValue = basicAuth.split(' ')[1];
-    const [user, pwd] = atob(authValue).split(':');
-
-    return NextResponse.rewrite(`${url}&username=${user}&password=${encodeURIComponent(pwd)}`);
-  }
-
-  return NextResponse.rewrite(url, { status: 401 });
-}
-```
+Description for the draftModeWordpress function.
 
 ### fetchWordpress
 Description for the fetchWordpress function.
@@ -266,38 +220,7 @@ Description for the ratios function.
 Description for the vwsize function.
 
 ### wpMail
-Recommended import:
-```javascript
-import { wpMail } from '@gewest13/components/dist/wpMail';
-```
-Example:
-```jsx
-// Path: app/api/mail/route.ts
-import { WORDPRESS_API_URL } from 'config';
-import { testWpMail, postWpMail } from '@gewest13/components/dist/wpMail';
-
-export async function GET(req: any) {
-  return testWpMail({
-    req,
-    api_url: WORDPRESS_API_URL,
-    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
-    // DONT USE THE PUBLIC_ PREFIX
-    wordpress_username: process.env.WORDPRESS_USERNAME!,
-    wordpress_password: process.env.WORDPRESS_PASSWORD!,
-  });
-}
-
-export async function POST(req: any) {
-  return postWpMail({
-    req,
-    api_url: WORDPRESS_API_URL,
-    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
-    // DONT USE THE PUBLIC_ PREFIX
-    wordpress_username: process.env.WORDPRESS_USERNAME!,
-    wordpress_password: process.env.WORDPRESS_PASSWORD!,
-  });
-}
-```
+Description for the wpMail function.
 
 ## Utils
 
