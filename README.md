@@ -172,6 +172,7 @@ Example:
 <Video
   src={{mediaItemUrl: 'placeholder.jpg', altText: 'placeholder'}}
   ratio={[1600, 900]}
+  className="video"
 />  
 
 <VideoComponent
@@ -184,15 +185,9 @@ Example:
 />
 
 <FullVideo 
-  ref={videoRef} 
-  disableFullScreenHandling 
-  srcFull={fullVideo} 
-  className={styles.video} 
-  ratios={{ desktop: [1680, 945] }} 
-  src={{ desktop: videoLoop }}
->
-  {fullVideo && (
-    <button onClick={() => videoRef.current.playFullScreen()}>Play movie</button>
+ref={videoRef} disableFullScreenHandling srcFull={fullVideo} className={styles.video} ratios={{ desktop: [1680, 945] }} src={{ desktop: videoLoop }}>
+  {buttonText && fullVideo && (
+    <BoxedButton onClick={() => videoRef.current.playFullScreen()} className={styles.mobileButton}>{buttonText}</BoxedButton>
   )}
 </FullVideo>
 ```
@@ -208,106 +203,7 @@ Description for the useWindowSize hook.
 Description for the createContainer function.
 
 ### draftModeWordpress
-Recommended import:
-```javascript
-import { draftModeWordpress } from '@gewest13/components/dist/draftModeWordpress';
-```
-Example:
-```jsx
-// Path: app/api/preview/route.ts
-import { WORDPRESS_API_URL } from 'config';
-import { draftModeWordpress } from '@gewest13/components/dist/draftModeWordpress';
-
-export async function GET(req: any) {
-  // When going to /api/preview?uri=1234
-  // uri should be the databaseId of the post
-  return draftModeWordpress({
-    req,
-    api_url: WORDPRESS_API_URL,
-  });
-}
-```
-```jsx
-// Path: inside the root on app level ~/middleware.ts
-import { NextRequest, NextResponse } from 'next/server';
-
-export const config = {
-  matcher: ['/api/preview'],
-};
-
-export async function middleware(req: NextRequest) {
-  const basicAuth = req.headers.get('authorization');
-  const url = req.nextUrl;
-
-  if (basicAuth) {
-    const authValue = basicAuth.split(' ')[1];
-    const [user, pwd] = atob(authValue).split(':');
-
-    return NextResponse.rewrite(`${url}&username=${user}&password=${encodeURIComponent(pwd)}`);
-  }
-
-  return NextResponse.rewrite(url, { status: 401 });
-}
-```
-```jsx
-// Path src/components/LivePreview/LivePreview.tsx
-// This also should be a shared component
-'use client';
-
-import React, { Suspense, startTransition, useEffect, useState } from 'react';
-
-import getPage from '@/lib/get-page';
-
-import Components from '@/shared/Components/Components';
-import Hero from '@/shared/Hero/Hero';
-
-function getCookie(name: string) {
-  const nameEQ = `${name}=`;
-  const ca = document.cookie.split(';');
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
-}
-
-export default function LivePreview(data: any) {
-  const [draftData, setDraftData] = useState(null) as any;
-  const { draftMode, id } = data;
-  const { acfComponents, acfHero } = draftData || data;
-
-  useEffect(() => {
-    if (!draftMode) return undefined;
-
-    const authToken = getCookie('token');
-
-    if (!authToken) return undefined;
-
-    const intervalId = setInterval(async () => {
-      const pageData = await getPage({ id });
-
-      startTransition(() => {
-        setDraftData(pageData);
-      });
-    }, 2000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  return (
-    <Suspense fallback={null}>
-      <Hero acfHero={acfHero} />
-      <Components acfComponents={acfComponents} />
-    </Suspense>
-  );
-}
-```
-
-> Don't forget to enable a caching header since this can be very heavy on the CMS
+Description for the draftModeWordpress function.
 
 ### fetchWordpress
 Description for the fetchWordpress function.
@@ -325,38 +221,7 @@ Description for the ratios function.
 Description for the vwsize function.
 
 ### wpMail
-Recommended import:
-```javascript
-import { wpMail } from '@gewest13/components/dist/wpMail';
-```
-Example:
-```jsx
-// Path: app/api/mail/route.ts
-import { WORDPRESS_API_URL } from 'config';
-import { testWpMail, postWpMail } from '@gewest13/components/dist/wpMail';
-
-export async function GET(req: any) {
-  return testWpMail({
-    req,
-    api_url: WORDPRESS_API_URL,
-    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
-    // DONT USE THE PUBLIC_ PREFIX
-    wordpress_username: process.env.WORDPRESS_USERNAME!,
-    wordpress_password: process.env.WORDPRESS_PASSWORD!,
-  });
-}
-
-export async function POST(req: any) {
-  return postWpMail({
-    req,
-    api_url: WORDPRESS_API_URL,
-    // DONT COPY THIS ENV VERIABLE IN THE NEXT CONFIG
-    // DONT USE THE PUBLIC_ PREFIX
-    wordpress_username: process.env.WORDPRESS_USERNAME!,
-    wordpress_password: process.env.WORDPRESS_PASSWORD!,
-  });
-}
-```
+Description for the wpMail function.
 
 ## Utils
 
