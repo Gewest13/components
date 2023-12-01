@@ -11,10 +11,32 @@ import { IFileComponent } from '../../interface';
 
 export interface IImage extends IFileComponent {
   priority?: boolean;
+  quality?: number;
 }
 
+/**
+ * Image is a React component that renders an image based on the provided props.
+ *
+ * @param props - The properties passed to the component, which include:
+ *  - `src`: The image source object.
+ *  - `margins`: Optional. The margins for each viewport.
+ *  - `ratios`: Optional. The ratios for each viewport.
+ *  - `priority`: Optional. If true, the image will be loaded immediately.
+ *  - `quality`: Optional. The quality of the image.
+ * @param ref - Ref forwarded to the container.
+ * @returns A React element representing the image.
+ *
+ * @example
+ * <Image
+ *   src={{ desktop: desktopSrc, tablet: tabletSrc, mobile: mobileSrc }}
+ *   margins={{ desktop: [100, 0, 100, 0], mobile: [100, 0, 100, 0] }}
+ *   ratios={{ desktop: [200, 200], tablet: [100, 100], mobile: [100, 100] }}
+ *   priority={true}
+ *   quality={70}
+ * />
+ */
 export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { src, margins, ratios, priority, ...rest } = props
+  const { src, margins, ratios, priority, quality = 70, ...rest } = props
 
   return (
     <div data-margin={!!margins} style={cssMarginVars(margins)} ref={ref} {...rest}>
@@ -37,6 +59,7 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
               height={ratio[1]}
               priority={priority}
               loading={priority ? 'eager' : 'lazy'}
+              quality={quality}
             />
           </div>
         )
