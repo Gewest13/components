@@ -116,7 +116,7 @@ Example:
   confirmationEmailTemplate={null}
   dataRecieverSubject="Data Receiver Subject"
   dataRecieverPreviewText="Data Receiver Preview Text"
-  dataRecieverEmail="datareceiver@email.com"
+  dataRecieverEmail="<p>First name: {{firstname}}</p>"
   mailReciever={{ databaseId: [1, 2, 3] }}
   mailSender={{ databaseId: 4 }}
   recaptcha_site_key={recaptcha}
@@ -138,10 +138,64 @@ Example:
 ```
 
 ### Swiper
-Description for the Swiper component.
+Recommended import:
+```javascript
+import { Swiper, SwiperCard } from '@gewest13/components/dist/Swiper';
+```
+Css import:
+```javascript
+import '@gewest13/components/dist/Swiper.css';
+```
+Example:
+```jsx
+<SharedSwiper>
+  {slides && slides.map((slide, index) => (
+    // Add width and height here
+    <SwiperCard className={styles.slideCard} key={index}>
+      {slide}
+    </SwiperCard>
+  ))}
+</SharedSwiper>
+```
 
 ### Video
-Description for the Video component.
+Recommended import:
+```javascript
+import { Video, VideoComponent, FullVideo } from '@gewest13/components/dist/Video';
+```
+Css import:
+```javascript
+import '@gewest13/components/dist/Video.css';
+```
+Example:
+```jsx
+<Video
+  src={{mediaItemUrl: 'placeholder.jpg', altText: 'placeholder'}}
+  ratio={[1600, 900]}
+/>  
+
+<VideoComponent
+  src={{
+    desktop: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    tablet: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    mobile: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+  }}
+  ratios={{ desktop: [1680, 1800], tablet: [840, 900], mobile: [432, 720] }}
+/>
+
+<FullVideo 
+  ref={videoRef} 
+  disableFullScreenHandling 
+  srcFull={fullVideo} 
+  className={styles.video} 
+  ratios={{ desktop: [1680, 945] }} 
+  src={{ desktop: videoLoop }}
+>
+  {fullVideo && (
+    <button onClick={() => videoRef.current.playFullScreen()}>Play movie</button>
+  )}
+</FullVideo>
+```
 
 ## Hooks
 
