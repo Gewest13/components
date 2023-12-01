@@ -31,11 +31,11 @@ Gewest13 Library Shared Components is a curated repository of reusable UI assets
 Components can be imported individually, or you have the option to import all components at once using the root file index.js. Additionally, you can include the main CSS file named index.css, which is situated within @gewest13/components/dist/index.css. However, for optimal organization, it is recommended to import each CSS file separately for the specific components you are utilizing.
 
 ### ColumnsContainer
-Recommended Import:
+Recommended import:
 ```javascript
 import { ColumnsContainer } from '@gewest13/components/dist/ColumnsContainer';
 ```
-Css:
+Css import:
 ```javascript
 import '@gewest13/components/dist/ColumnsContainer.css';
 ```
@@ -65,13 +65,74 @@ Example:
 ```
 
 ### Image
-Description for the Image component.
+Recommended import:
+```javascript
+import { Image } from '@gewest13/components/dist/Image';
+```
+Css import:
+```javascript
+import '@gewest13/components/dist/Image.css';
+```
+Example:
+```jsx
+<Image
+  src={{
+    desktop: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    tablet: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+    mobile: { mediaItemUrl: 'placeholder.jpg', altText: 'placeholder' },
+  }}
+  ratios={{ desktop: [1680, 1800], tablet: [840, 900], mobile: [432, 720] }}
+/>
+```
 
 ### RecaptchaV3
-Description for the RecaptchaV3 component.
+Recommended import:
+```javascript
+import { RecaptchaV3, getToken } from '@gewest13/components/dist/RecaptchaV3';
+```
+Example:
+```jsx
+// Recaptcha is the recaptcha site key from the google recaptcha admin
+<RecaptchaV3 recaptcha={recaptcha} />
+```
 
 ### SharedForm
-Description for the SharedForm component.
+Recommended import:
+```javascript
+import { SharedForm } from '@gewest13/components/dist/SharedForm';
+```
+Example:
+```jsx
+<SharedForm
+  // Best practice to spread props from wordpress
+  Container={<form className="example" />}
+  confirmationSubject="Confirmation Subject"
+  confirmationPreviewText="Confirmation Preview Text"
+  confirmationEmail="<p>Hey {{firstname}}</p>"
+  // React email template here
+  confirmationEmailTemplate={null}
+  dataRecieverSubject="Data Receiver Subject"
+  dataRecieverPreviewText="Data Receiver Preview Text"
+  dataRecieverEmail="datareceiver@email.com"
+  mailReciever={{ databaseId: [1, 2, 3] }}
+  mailSender={{ databaseId: 4 }}
+  recaptcha_site_key={recaptcha}
+  onSubmit={handleFormSubmit}
+  onSuccessfulSubmit={handleSuccessfulSubmit}
+  onFailedSubmit={handleFailedSubmit}
+  debug={true}
+>
+  <label htmlFor="textInput">
+    Enter Text:
+    <input
+      type="text"
+      id="textInput"
+      value=""
+    />
+  </label>
+  {/* Add other form elements as needed */}
+</SharedForm>
+```
 
 ### Swiper
 Description for the Swiper component.
