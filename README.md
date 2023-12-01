@@ -101,6 +101,9 @@ Recommended import:
 ```javascript
 import { SharedForm } from '@gewest13/components/dist/SharedForm';
 ```
+Important:
+> ⚠️ To use this shared form you should first import the [wpMail](#wpmail) function.
+
 Example:
 ```jsx
 <SharedForm
