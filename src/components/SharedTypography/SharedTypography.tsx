@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, ButtonHTMLAttributes, HTMLAttributes, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, ButtonHTMLAttributes, HTMLAttributes, useRef, useEffect, useImperativeHandle, useMemo } from 'react';
 
 import { splitLetters, splitWords, splitLines } from 'textsplitter';
 
@@ -22,22 +22,27 @@ export interface TTypography {
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 type DivProps = HTMLAttributes<HTMLDivElement>;
 
-// export type TypographyImperativeHandle = {
-//   typoRef: HTMLButtonElement | HTMLDivElement;
-//   splitRef: ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>;
-// }
+export type TypographyImperativeHandle = {
+  typoRef: HTMLButtonElement | HTMLDivElement;
+  state: { split: ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines> };
+}
 
 export type TTypographyType =
   | ({ tag: 'button' } & ButtonProps)
   | ({ tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'li' | 'a' | 'div' | 'small' | 'label' } & DivProps);
 
-export const SharedTypography = forwardRef<HTMLButtonElement | HTMLDivElement, TTypographyType & Ivwsizes & TTypography>((props, ref) => {
+export const SharedTypography = forwardRef<TypographyImperativeHandle, TTypographyType & Ivwsizes & TTypography>((props, ref) => {
   const { tag, children, uppercase, style, color, block, vwSizes, margins, split, ...rest } = props;
 
   const typoRef = useRef() as React.MutableRefObject<HTMLButtonElement | HTMLDivElement>;
-  const splitRef = useRef() as React.MutableRefObject<ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>>;
+  // const splitRef = useRef() as React.MutableRefObject<ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>>;
 
-  useImperativeHandle(ref, () => typoRef.current, []);
+  const state = useMemo(() => ({
+    split: undefined as unknown as ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>,
+  }), [split]);
+
+
+  useImperativeHandle(ref, () => ({ typoRef: typoRef.current, state: state }), []);
 
   useEffect(() => {
     if (!split || !typoRef.current) return () => {};
@@ -50,12 +55,12 @@ export const SharedTypography = forwardRef<HTMLButtonElement | HTMLDivElement, T
 
     const splitFunction = setSplitFunctions[split.type];
 
-    splitRef.current = splitFunction(typoRef.current, split.open, split.close);
+    state.split = splitFunction(typoRef.current, split.open, split.close);
 
-    console.log(splitRef.current);
+    console.log();
 
     return () => {
-      splitRef.current.destroy();
+      state.split.destroy();
     };
   }, [split, typoRef]);
 
