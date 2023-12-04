@@ -5,22 +5,21 @@ import { createContainer } from '../../functions/createContainer';
 import { cssColumRowVars } from '../../functions/grid';
 import { ColumnGrid } from '../../interface';
 
-/**
- * Interface defining the props for the ColumnsContainer component.
- */
 export interface IColumnsContainerProps {
   /**
-   * The container element or component.
-   * @default 'div'
-   * @example
-   * <Container desktopRow={60} />
-   * Container
+   * There are multiple ways to use this prop:
+   * @default
    * <div />
+   * @example
+   * <Container desktopRow={60} /> || Container || <div />
    */
   Container: React.ReactElement<HTMLDivElement> | React.ForwardRefExoticComponent<any | React.RefAttributes<HTMLDivElement>>;
-  /** Flag to specify if the layout should be in one row. */
+  /** Flag to specify if the layout should be in one row.
+   *  @default false
+   *
+  */
   oneRow?: boolean;
-  /** Additional className for custom styling. */
+  /** Additional className for custom styling. If the Container contains a className, then this className will be ignored. */
   className?: string;
   /**
    * Array of column definitions with grids, className, and component.
@@ -39,12 +38,12 @@ export interface IColumnsContainerProps {
     grids: ColumnGrid;
     /**
      * @example
-     * 'custom-class' or styles.customClass
+     * 'custom-class' || styles.customClass
      */
     className?: string;
     /**
      * @example
-     * <MyComponent />
+     * <MyComponent /> || <div />
      */
     component: React.ReactNode;
   }[];
@@ -65,7 +64,7 @@ export interface IColumnsContainerProps {
  * <ColumnsContainer
  *   Container={<Container desktopRow={60} />}
  *   className={styles.container}
- *   oneRow={false}
+ *   oneRow
  *   columns={[
  *     {
  *       grids: { desktop: { column: '1 / -1' }, tablet: { column: '1 / span 2', row: '1 / 3' } }, mobile: { column: '1 / -1' } },
@@ -78,7 +77,7 @@ export interface IColumnsContainerProps {
  * />
  */
 export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProps & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { Container = 'div', columns, oneRow, ...rest } = props;
+  const { Container = <div />, columns, oneRow, ...rest } = props;
 
   const CreatedContainer = createContainer(Container);
 

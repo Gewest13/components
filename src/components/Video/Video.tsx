@@ -6,12 +6,28 @@ import { cssRatioVar } from '../../functions/ratios';
 import { IFileComponent, Margins, TFile } from '../../interface';
 
 export interface IVideoProps extends HTMLAttributes<HTMLVideoElement> {
+  /** Aspect ratio of the video
+   * @example
+   * [1920, 1080]
+  */
   ratio: [number, number];
+  /** Source file of the video
+   * @example
+   * { mediaItemUrl: 'video-url.mp4', altText: 'Video' }
+  */
   src: TFile;
+  /** Additional className for custom styling */
   className?: string;
+  /** Margins to be applied to the video container
+   * @example
+   * {desktop: [100, 0, 100, 0], tablet: [100, 0, 100, 0], mobile: [100, 0, 100, 0]}
+  */
   margins?: Margins;
+  /**  Controls whether the video should have playback controls */
   controls?: boolean;
+  /** Specifies how the video should be preloaded. Options are "none", "metadata", or "auto". */
   preload?: "none" | "metadata" | "auto";
+  /** Custom data attribute for viewport-specific behavior */
   'data-viewport'?: string;
 }
 
@@ -34,7 +50,7 @@ export interface IVideoProps extends HTMLAttributes<HTMLVideoElement> {
  *   ratio={[16, 9]}
  *   src={{ mediaItemUrl: 'video-url.mp4' }}
  *   className="custom-video-class"
- *   margins={{ top: '10px', bottom: '10px' }}
+ *   margins={desktop: [100, 0, 100, 0], tablet: [100, 0, 100, 0], mobile: [100, 0, 100, 0]}
  *   controls
  *   preload="auto"
  *   data-viewport="desktop"
@@ -63,6 +79,7 @@ export const Video = forwardRef<HTMLVideoElement, IVideoProps>((props, ref) => {
 Video.displayName = 'Video';
 
 export interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTMLDivElement> {
+  /** Child elements to be rendered within the video component */
   children?: React.ReactNode;
   videoAttributes?: React.HTMLAttributes<HTMLVideoElement>;
 }
@@ -82,8 +99,8 @@ export interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTML
  * @example
  * <VideoComponent
  *   src={{ mobile: mobileSrc, tablet: tabletSrc, desktop: desktopSrc }}
- *   ratios={{ mobile: [4, 3], tablet: [16, 9], desktop: [21, 9] }}
- *   margins={{ top: '15px', bottom: '15px' }}
+ *   ratios={{ desktop: [1920, 1080], tablet: [728, 900], desktop: [400, 600] }}
+ *   margins={{ desktop: [100, 0, 100, 0], tablet: [100, 0, 100, 0], mobile: [100, 0, 100, 0] }}
  * >
  *   <div>Additional Content</div>
  * </VideoComponent>

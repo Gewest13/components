@@ -1,8 +1,14 @@
 export interface TFile {
+  /** URL of the File source */
   mediaItemUrl: string
+  /** Alt text of the File source */
   altText?: string
 }
 
+/** Margins to be applied to the video container
+ * @example
+ * {desktop: [100, 0, 100, 0], tablet: [100, 0, 100, 0], mobile: [100, 0, 100, 0]}
+*/
 export interface Margins {
   /** Margin for mobile devices */
   mobile?: [number, number, number, number];
@@ -47,11 +53,11 @@ export interface FileSource {
 }
 
 export interface FileRatios {
-  /** Aspect ratio for desktop view (width, height) */
+  /** Aspect ratio for desktop view [width, height] */
   desktop: [number, number];
-  /** Aspect ratio for tablet view (width, height) */
+  /** Aspect ratio for tablet view [width, height] */
   tablet?: [number, number];
-  /** Aspect ratio for mobile view (width, height) */
+  /** Aspect ratio for mobile view [width, height] */
   mobile?: [number, number];
 }
 
@@ -60,6 +66,6 @@ export interface IFileComponent {
   src: FileSource;
   /** Aspect ratios for different device types */
   ratios: FileRatios;
-  /** Margins for different device types */
+  /** Margins to be applied to the video container */
   margins?: Margins;
 }
