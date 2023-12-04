@@ -7,7 +7,7 @@ import NextImage from 'next/image';
 import styles from './Image.module.scss';
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
-import { IFileComponent } from '../../interface';
+import { IFileComponent, Ivwsizes } from '../../interface';
 
 export interface IImage extends IFileComponent {
   /**
@@ -43,17 +43,34 @@ export interface IImage extends IFileComponent {
  *   quality={70}
  * />
  */
-export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-  const { src, margins, ratios, priority, quality = 70, ...rest } = props
+export const Image = forwardRef<HTMLDivElement, IImage & Ivwsizes & React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+  const { src, margins, ratios, priority, quality = 70, vwSizes, ...rest } = props
 
   return (
-    <div data-margin={!!margins} style={cssMarginVars(margins)} ref={ref} {...rest}>
+    <div data-margin={!!margins} style={cssMarginVars(margins, { vwSizes: vwSizes })} ref={ref} {...rest}>
       {Object.keys(src).map((key, index) => {
         const item = src[key as 'desktop'] as IImage['src']['desktop'];
         const ratio = ratios[key as 'desktop'] as IImage['ratios']['desktop'];
 
         if (!item) return null;
         if (!item.mediaItemUrl) return null;
+
+        const widthDesktop = {
+          desktop: {
+            image: 1920,
+            design: vwSizes?.desktop || 1728,
+          },
+          tablet: {
+            image: 1024,
+            design: vwSizes?.tablet || 1024,
+          },
+          mobile: {
+            image: 432,
+            design: vwSizes?.mobile || 432,
+          },
+        };
+
+        const multiplier = widthDesktop[key as 'desktop'].image / widthDesktop[key as 'desktop'].design;
 
         return (
           <div data-viewport={key} key={index} className={styles.imageWrap} style={cssRatioVar(ratio)}>
@@ -63,8 +80,8 @@ export const Image = forwardRef<HTMLDivElement, IImage & React.HTMLAttributes<HT
               key={index}
               src={item.mediaItemUrl}
               alt={item.altText || ''}
-              width={ratio[0]}
-              height={ratio[1]}
+              width={ratio[0] * multiplier}
+              height={ratio[1] * multiplier}
               priority={priority}
               loading={priority ? 'eager' : 'lazy'}
               quality={quality}

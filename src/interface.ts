@@ -69,3 +69,14 @@ export interface IFileComponent {
   /** Margins to be applied to the video container */
   margins?: Margins;
 }
+
+export interface Ivwsizes {
+  vwSizes: {
+    /** Size for desktop devices */
+    desktop?: number;
+    /** Size for tablet devices */
+    tablet?: number;
+    /** Size for mobile devices */
+    mobile?: number;
+  }
+}

@@ -28,6 +28,11 @@ ImageComponent.args = {
       mediaItemUrl: '/static/media/src/stories/assets/image.jpg'
     }
   },
+  vwSizes: {
+    desktop: 1728,
+    tablet: 1024,
+    mobile: 400
+  },
   margins: {
     mobile: [100, 0, 100, 0],
     tablet: [100, 0, 100, 0],

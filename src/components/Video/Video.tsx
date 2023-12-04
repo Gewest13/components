@@ -3,7 +3,7 @@ import React, { HTMLAttributes, forwardRef, useEffect, useImperativeHandle, useR
 import styles from './Video.module.scss'
 import { cssMarginVars } from '../../functions/margin';
 import { cssRatioVar } from '../../functions/ratios';
-import { IFileComponent, Margins, TFile } from '../../interface';
+import { IFileComponent, Ivwsizes, Margins, TFile } from '../../interface';
 
 export interface IVideoProps extends HTMLAttributes<HTMLVideoElement> {
   /** Aspect ratio of the video
@@ -105,13 +105,13 @@ export interface VideoComponentProps extends IFileComponent, HTMLAttributes<HTML
  *   <div>Additional Content</div>
  * </VideoComponent>
  */
-export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps>((props, ref) => {
-  const { ratios, src, margins, videoAttributes, children, ...rest } = props;
+export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps & Ivwsizes>((props, ref) => {
+  const { ratios, src, margins, videoAttributes, children, vwSizes, ...rest } = props;
 
   const hasOneVideo = Object.keys(src).length === 1;
 
   return (
-    <div data-margin={!!margins} style={cssMarginVars(margins)} ref={ref} { ...rest}>
+    <div data-margin={!!margins} style={cssMarginVars(margins, { vwSizes: vwSizes })} ref={ref} { ...rest}>
       {children && children}
       {src.mobile && ratios.mobile && (
         <Video data-viewport={`${!hasOneVideo ? 'mobile' : ''}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
@@ -176,7 +176,7 @@ export const exitFullScreen = (element: HTMLVideoElement) => {
   }
 }
 
-export interface IFullVideo extends IFileComponent, React.HTMLAttributes<HTMLDivElement> {
+export interface IFullVideo extends IFileComponent, Ivwsizes, React.HTMLAttributes<HTMLDivElement> {
   /** Source for the full video */
   srcFull?: TFile;
 
