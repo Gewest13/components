@@ -27,7 +27,7 @@ SingleVideo.args = {
   }
 };
 
-const TemplateMultiScreenVideo: StoryFn<typeof VideoComponent> = (args) => <VideoComponent {...args} />;
+const TemplateMultiScreenVideo: StoryFn<typeof VideoComponent> = (args) => <VideoComponent  {...args} />;
 
 export const MultiScreenVideo = TemplateMultiScreenVideo.bind({});
 

@@ -22,19 +22,18 @@ const Template: StoryFn<typeof ColumnsContainer> = ({ ...rest }) => {
     <ColumnsContainer
       {...rest}
       Container={<div />}
+      ref={ref}
       columns={[
         {
           grids: { desktop: { column: '1 / -1', row: '1 / 2' }, mobile: { column: '1 / -1', row: '1 / 2' } },
           component: <div />
         }
       ]}
-      ref={ref}
     />
   )
 };
 
 export const ImageComponent = Template.bind({});
-
 
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 ImageComponent.args = {

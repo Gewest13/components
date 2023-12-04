@@ -10,7 +10,15 @@ import { cssRatioVar } from '../../functions/ratios';
 import { IFileComponent } from '../../interface';
 
 export interface IImage extends IFileComponent {
+  /**
+   * If true, the image will be loaded immediately.
+   * @default false
+  */
   priority?: boolean;
+  /**
+   * The quality of the image.
+   * @default 70
+  */
   quality?: number;
 }
 
@@ -18,7 +26,7 @@ export interface IImage extends IFileComponent {
  * Image is a React component that renders an image based on the provided props.
  *
  * @param props - The properties passed to the component, which include:
- *  - `src`: The image source object.
+ *  - `src`: The source of the image for each viewport.
  *  - `margins`: Optional. The margins for each viewport.
  *  - `ratios`: Optional. The ratios for each viewport.
  *  - `priority`: Optional. If true, the image will be loaded immediately.
