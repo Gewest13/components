@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react'
-import { forwardRef, ButtonHTMLAttributes, HTMLAttributes, useRef, useCallback, useEffect } from 'react';
+import React, { forwardRef, ButtonHTMLAttributes, HTMLAttributes, useRef, useEffect, useImperativeHandle } from 'react';
 
 import { splitLetters, splitWords, splitLines } from 'textsplitter';
 
@@ -23,6 +22,11 @@ export interface TTypography {
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 type DivProps = HTMLAttributes<HTMLDivElement>;
 
+// export type TypographyImperativeHandle = {
+//   typoRef: HTMLButtonElement | HTMLDivElement;
+//   splitRef: ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>;
+// }
+
 export type TTypographyType =
   | ({ tag: 'button' } & ButtonProps)
   | ({ tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'li' | 'a' | 'div' | 'small' | 'label' } & DivProps);
@@ -31,15 +35,9 @@ export const SharedTypography = forwardRef<HTMLButtonElement | HTMLDivElement, T
   const { tag, children, uppercase, style, color, block, vwSizes, margins, split, ...rest } = props;
 
   const typoRef = useRef() as React.MutableRefObject<HTMLButtonElement | HTMLDivElement>;
+  const splitRef = useRef() as React.MutableRefObject<ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>>;
 
-  const setRefs = useCallback((node: HTMLDivElement) => {
-    typoRef.current = node;
-
-    if (!ref) return;
-
-    const forwardedRef = ref as React.MutableRefObject<HTMLDivElement>;
-    forwardedRef.current = node;
-  }, [ref]);
+  useImperativeHandle(ref, () => typoRef.current, []);
 
   useEffect(() => {
     if (!split || !typoRef.current) return () => {};
@@ -52,10 +50,12 @@ export const SharedTypography = forwardRef<HTMLButtonElement | HTMLDivElement, T
 
     const splitFunction = setSplitFunctions[split.type];
 
-    const splitRef = splitFunction(typoRef.current, split.open, split.close);
+    splitRef.current = splitFunction(typoRef.current, split.open, split.close);
+
+    console.log(splitRef.current);
 
     return () => {
-      splitRef.destroy();
+      splitRef.current.destroy();
     };
   }, [split, typoRef]);
 
@@ -65,7 +65,7 @@ export const SharedTypography = forwardRef<HTMLButtonElement | HTMLDivElement, T
 
   return (
     <Tag
-      ref={setRefs}
+      ref={typoRef}
       data-margin={!!margins}
       style={{
         textTransform: uppercase ? 'uppercase' : undefined,
