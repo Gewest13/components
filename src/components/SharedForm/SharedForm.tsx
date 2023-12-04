@@ -27,8 +27,8 @@ export interface ISharedFormProps {
   dataRecieverEmail: string
   // ** A list of SMTP account ids to send the data reciever email to */
   mailReciever: {
-    databaseId: (number | string)[]
-  }
+    databaseId: (number | string)
+  }[]
   // ** The database ID of the mail sender */
   mailSender: {
     databaseId: (number | string)
@@ -87,7 +87,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
         emailTemplate: confirmationEmailTemplate,
       },
       dataReciever: {
-        id: mailReciever.databaseId.map((id) => id),
+        id: mailReciever.map(({ databaseId }) => databaseId),
         subject: props.dataRecieverSubject!,
         previewText: props.dataRecieverPreviewText!,
         content: props.dataRecieverEmail,

@@ -117,7 +117,7 @@ Example:
   dataRecieverSubject="Data Receiver Subject"
   dataRecieverPreviewText="Data Receiver Preview Text"
   dataRecieverEmail="<p>First name: {{firstname}}</p>"
-  mailReciever={{ databaseId: [1, 2, 3] }}
+  mailReciever={[{databaseId: 3, databaseId: 2, databaseId: 1}]}
   mailSender={{ databaseId: 4 }}
   recaptcha_site_key={recaptcha}
   onSubmit={handleFormSubmit}
