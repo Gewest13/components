@@ -71,7 +71,7 @@ export interface IFileComponent {
 }
 
 export interface Ivwsizes {
-  vwSizes: {
+  vwSizes?: {
     /** Size for desktop devices */
     desktop?: number;
     /** Size for tablet devices */

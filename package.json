@@ -32,10 +32,11 @@
   "license": "MIT",
   "homepage": "https://github.com/Gewest13/components",
   "peerDependencies": {
+    "@react-email/components": "^0.0.11",
     "next": "^14.0.3",
     "nodemailer": "^6.9.7",
     "react": ">=16.8.0",
-    "@react-email/components": "^0.0.11",
+    "textsplitter": "^9.6.0",
     "react-dom": ">=16.8.0"
   },
   "devDependencies": {
@@ -91,6 +92,7 @@
     "sass-loader": "^13.3.2",
     "storybook": "^7.0.2",
     "storybook-addon-next": "^1.8.0",
+    "textsplitter": "^9.6.0",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "typescript-plugin-css-modules": "^5.0.2"
