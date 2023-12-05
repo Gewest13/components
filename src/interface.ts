@@ -5,6 +5,15 @@ export interface TFile {
   altText?: string
 }
 
+export interface TLink {
+  /** URL of the link */
+  target?: string;
+  /** Title of the link */
+  title?: string;
+  /** URL of the link */
+  url?: string;
+}
+
 /** Margins to be applied to the video container
  * @example
  * {desktop: [100, 0, 100, 0], tablet: [100, 0, 100, 0], mobile: [100, 0, 100, 0]}

@@ -58,6 +58,8 @@ const addDeclaration = ({ pathTs, componentName }) => ({
 export default [
   baseConfig,
   addConfig({ componentName: 'SharedTypography', path: 'src/components/SharedTypography/SharedTypography.tsx' }),
+  addConfig({ componentName: 'SharedLink', path: 'src/components/SharedLink/SharedLink.tsx' }),
+  addConfig({ componentName: 'ButtonTemplate', path: 'src/components/ButtonTemplate/ButtonTemplate.tsx' }),
   addConfig({ componentName: 'Image', path: 'src/components/Image/Image.tsx', pathCss: 'src/components/Image/Image.module.scss' }),
   addConfig({ componentName: 'Video', path: 'src/components/Video/Video.tsx', pathCss: 'src/components/Video/Video.module.scss' }),
   addConfig({ componentName: 'Swiper', path: 'src/components/Swiper/Swiper.tsx', pathCss: 'src/components/Swiper/Swiper.module.scss' }),
@@ -70,6 +72,8 @@ export default [
   addConfig({ componentName: 'wpMail', path: 'src/functions/wpMail.ts' }),
   addConfig({ componentName: 'getRelationshipData', path: 'src/functions/getRelationshipData.ts' }),
   addDeclaration({ componentName: 'SharedTypography', pathTs: 'dist/components/SharedTypography/SharedTypography.d.ts' }),
+  addDeclaration({ componentName: 'SharedLink', pathTs: 'dist/components/SharedLink/SharedLink.d.ts' }),
+  addDeclaration({ componentName: 'ButtonTemplate', pathTs: 'dist/components/ButtonTemplate/ButtonTemplate.d.ts' }),
   addDeclaration({ componentName: 'Image', pathTs: 'dist/components/Image/Image.d.ts' }),
   addDeclaration({ componentName: 'Video', pathTs: 'dist/components/Video/Video.d.ts' }),
   addDeclaration({ componentName: 'Swiper', pathTs: 'dist/components/Swiper/Swiper.d.ts' }),
