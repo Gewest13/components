@@ -11,8 +11,6 @@ export default {
 };
 
 const Template: StoryFn<typeof SharedTypography> = ({ ...rest }) => {
-  console.log('hoh');
-
   const ref = useRef() as any;
 
   useEffect(() => {
@@ -29,7 +27,7 @@ const Template: StoryFn<typeof SharedTypography> = ({ ...rest }) => {
     });
 
     setTimeout(() => {
-      ref.current.state.split.destroy();
+      ref.current.split.destroy();
     }, 600);
   }, [ref]);
 

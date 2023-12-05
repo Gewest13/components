@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, ButtonHTMLAttributes, HTMLAttributes, useRef, useEffect, useImperativeHandle, useMemo } from 'react';
+import React, { forwardRef, ButtonHTMLAttributes, HTMLAttributes, useRef, useEffect, useImperativeHandle, useState } from 'react';
 
 import { splitLetters, splitWords, splitLines } from 'textsplitter';
 
@@ -24,7 +24,7 @@ type DivProps = HTMLAttributes<HTMLDivElement>;
 
 export type TypographyImperativeHandle = {
   typoRef: HTMLButtonElement | HTMLDivElement;
-  state: { split: ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines> };
+  split?: { container: HTMLElement; destroy: () => void; };
 }
 
 export type TTypographyType =
@@ -35,14 +35,12 @@ export const SharedTypography = forwardRef<TypographyImperativeHandle, TTypograp
   const { tag, children, uppercase, style, color, block, vwSizes, margins, split, ...rest } = props;
 
   const typoRef = useRef() as React.MutableRefObject<HTMLButtonElement | HTMLDivElement>;
-  // const splitRef = useRef() as React.MutableRefObject<ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>>;
+  const [splitState, setSplitState] = useState<{ container: HTMLElement; destroy: () => void; }>();
 
-  const state = useMemo(() => ({
-    split: undefined as unknown as ReturnType<typeof splitLetters> | ReturnType<typeof splitWords> | ReturnType<typeof splitLines>,
-  }), [split]);
-
-
-  useImperativeHandle(ref, () => ({ typoRef: typoRef.current, state: state }), []);
+  useImperativeHandle(ref, () => ({
+    typoRef: typoRef.current,
+    split: splitState
+  }), [splitState]);
 
   useEffect(() => {
     if (!split || !typoRef.current) return () => {};
@@ -54,13 +52,12 @@ export const SharedTypography = forwardRef<TypographyImperativeHandle, TTypograp
     };
 
     const splitFunction = setSplitFunctions[split.type];
+    const splitFn = splitFunction(typoRef.current, split.open, split.close);
 
-    state.split = splitFunction(typoRef.current, split.open, split.close);
-
-    console.log();
+    setSplitState(splitFn);
 
     return () => {
-      state.split.destroy();
+      splitFn.destroy();
     };
   }, [split, typoRef]);
 
