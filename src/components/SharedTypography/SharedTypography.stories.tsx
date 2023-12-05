@@ -29,7 +29,7 @@ const Template: StoryFn<typeof SharedTypography> = ({ ...rest }) => {
     setTimeout(() => {
       ref.current.split.destroy();
     }, 600);
-  }, [ref]);
+  }, []);
 
 
   return <SharedTypography ref={ref} {...rest} />;
