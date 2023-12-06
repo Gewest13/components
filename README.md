@@ -73,6 +73,24 @@ Css import:
 ```javascript
 import '@gewest13/components/dist/Image.css';
 ```
+Recommended use:
+```jsx
+// src/shared/Image/Image.tsx
+import React from 'react';
+
+import { Image as SharedImage } from '@gewest13/components/dist/Image';
+
+import { vwsizes } from 'config';
+
+export default function Image(props: React.ComponentProps<typeof SharedImage>) {
+  return (
+    <SharedImage
+      vwSizes={vwsizes}
+      {...props}
+    />
+  );
+}
+```
 Example:
 ```jsx
 <Image

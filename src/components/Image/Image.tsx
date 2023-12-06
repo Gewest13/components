@@ -65,7 +65,7 @@ export const Image = forwardRef<HTMLDivElement, IImage & Ivwsizes & React.HTMLAt
             design: vwSizes?.tablet || 1024,
           },
           mobile: {
-            image: 432,
+            image: 380,
             design: vwSizes?.mobile || 432,
           },
         };
