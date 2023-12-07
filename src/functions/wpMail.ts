@@ -1,9 +1,35 @@
 import { render } from '@react-email/components';
+import Mustache  from 'mustache';
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import nodemailer from 'nodemailer';
 
 import { fetchWordpress } from "./fetchWordpress";
+
+function isTimeAfter(timeString: string, utcOffset: number) {
+  const currentTime = new Date().toLocaleTimeString('en-US', { timeZone: 'UTC' });
+  const targetTime = new Date(`1970-01-01T${timeString}+00:00`);
+  targetTime.setHours(targetTime.getHours() + utcOffset);
+  return currentTime > targetTime.toLocaleTimeString('en-US', { timeZone: 'UTC' });
+}
+
+function isTimeBefore(timeString: string, utcOffset: number) {
+  const currentTime = new Date().toLocaleTimeString('en-US', { timeZone: 'UTC' });
+  const targetTime = new Date(`1970-01-01T${timeString}+00:00`);
+  targetTime.setHours(targetTime.getHours() + utcOffset);
+  return currentTime < targetTime.toLocaleTimeString('en-US', { timeZone: 'UTC' });
+}
+
+// Custom function for date comparison
+function isDateAfter(dateString: string) {
+  return new Date().getTime() > new Date(dateString).getTime();
+}
+
+function isDateBefore(dateString: string) {
+  return new Date().getTime() < new Date(dateString).getTime();
+}
+
+
 
 const getAllPrivateSettings = `
   query GetAllPrivateSettings {
@@ -275,14 +301,25 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     messageSubject = confirmation.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
   }
 
+  const mustacheData = {
+    isDateAfter: isDateAfter,
+    isDateBefore: isDateBefore,
+    isTimeAfter: isTimeAfter,
+    isTimeBefore: isTimeBefore,
+  };
+
   if (confirmation && confirmation.content) {
     if (typeof message === 'string') {
+      message = Mustache.render(confirmation.content, mustacheData);
       message = confirmation.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
     } else {
       const EmailTemplate = confirmation.emailTemplate;
       const emailHtml = render(EmailTemplate({ previewText: confirmation.previewText, data: confirmation.content }));
 
-      message = emailHtml.replace(/{{(.+?)}}/g, (_match: any, p1: any) => mail[p1]);
+      // Render the template
+      const renderedString = Mustache.render(emailHtml, mustacheData);
+
+      message = renderedString.replace(/{{(.+?)}}/g, (_match: any, p1: any) => mail[p1]);
     }
   }
 
@@ -337,6 +374,8 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
       name: 'Test',
       email: email_reciever,
       message: 'Test',
+      firstName: 'Test',
+      lastName: 'Test',
     },
     sender: {
       id,
@@ -344,7 +383,32 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
     confirmation: {
       subject: 'Test',
       previewText: 'Test',
-      content: 'Test',
+      content: `
+Firstname: {{firstName}},
+{{#isDateAfter "2024-08-20"}}
+  Return this string for date after
+{{^}}
+  Else this one for date after
+{{/isDateAfter}}
+
+{{#isDateBefore "2024-08-20"}}
+  Return this string for date before
+{{^}}
+  Else this one for date before
+{{/isDateBefore}}
+
+{{#isTimeAfter "12:00:00"}}
+  Return this string for time after
+{{^}}
+  Else this one for time after
+{{/isTimeAfter}}
+
+{{#isTimeBefore "12:00:00"}}
+  Return this string for time before
+{{^}}
+  Else this one for time before
+{{/isTimeBefore}}
+      `,
     },
     dataReciever: {
       id: [id],
