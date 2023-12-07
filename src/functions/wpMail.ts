@@ -1,34 +1,64 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { render } from '@react-email/components';
-import Mustache  from 'mustache';
+import Handlebars  from 'handlebars';
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import nodemailer from 'nodemailer';
 
 import { fetchWordpress } from "./fetchWordpress";
 
-function isTimeAfter(timeString: string, utcOffset: number) {
+// Register custom block helper for date comparison
+Handlebars.registerHelper('isDateAfter', function (dateString, options) {
+  // @ts-ignore
+  return new Date().getTime() > new Date(dateString).getTime() ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper('isDateBefore', function (dateString, options) {
+  // @ts-ignore
+  return new Date().getTime() < new Date(dateString).getTime() ? options.fn(this) : options.inverse(this);
+});
+
+// Register custom block helper for time comparison with UTC offset
+Handlebars.registerHelper('isTimeAfter', function (timeString, utcOffset, options) {
   const currentTime = new Date().toLocaleTimeString('en-US', { timeZone: 'UTC' });
   const targetTime = new Date(`1970-01-01T${timeString}+00:00`);
   targetTime.setHours(targetTime.getHours() + utcOffset);
-  return currentTime > targetTime.toLocaleTimeString('en-US', { timeZone: 'UTC' });
-}
+  // @ts-ignore
+  return currentTime > targetTime.toLocaleTimeString('en-US', { timeZone: 'UTC' }) ? options.fn(this) : options.inverse(this);
+});
 
-function isTimeBefore(timeString: string, utcOffset: number) {
+Handlebars.registerHelper('isTimeBefore', function (timeString, utcOffset, options) {
   const currentTime = new Date().toLocaleTimeString('en-US', { timeZone: 'UTC' });
   const targetTime = new Date(`1970-01-01T${timeString}+00:00`);
   targetTime.setHours(targetTime.getHours() + utcOffset);
-  return currentTime < targetTime.toLocaleTimeString('en-US', { timeZone: 'UTC' });
-}
+  // @ts-ignore
+  return currentTime < targetTime.toLocaleTimeString('en-US', { timeZone: 'UTC' }) ? options.fn(this) : options.inverse(this);
+});
 
-// Custom function for date comparison
-function isDateAfter(dateString: string) {
-  return new Date().getTime() > new Date(dateString).getTime();
-}
+// Register custom block helpers for time of day
+Handlebars.registerHelper('isMorning', function (options) {
+  const currentHour = new Date().getHours();
+  // @ts-ignore
+  return currentHour >= 6 && currentHour < 12 ? options.fn(this) : options.inverse(this);
+});
 
-function isDateBefore(dateString: string) {
-  return new Date().getTime() < new Date(dateString).getTime();
-}
+Handlebars.registerHelper('isAfternoon', function (options) {
+  const currentHour = new Date().getHours();
+  // @ts-ignore
+  return currentHour >= 12 && currentHour < 18 ? options.fn(this) : options.inverse(this);
+});
 
+Handlebars.registerHelper('isEvening', function (options) {
+  const currentHour = new Date().getHours();
+  // @ts-ignore
+  return currentHour >= 18 && currentHour < 24 ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper('isNight', function (options) {
+  const currentHour = new Date().getHours();
+  // @ts-ignore
+  return currentHour >= 0 && currentHour < 6 ? options.fn(this) : options.inverse(this);
+});
 
 
 const getAllPrivateSettings = `
@@ -298,28 +328,17 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   let message = '';
 
   if (confirmation?.subject) {
-    messageSubject = confirmation.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+    messageSubject = Handlebars.compile(confirmation.subject)(mail);
   }
-
-  const mustacheData = {
-    isDateAfter: isDateAfter,
-    isDateBefore: isDateBefore,
-    isTimeAfter: isTimeAfter,
-    isTimeBefore: isTimeBefore,
-  };
 
   if (confirmation && confirmation.content) {
     if (typeof message === 'string') {
-      message = Mustache.render(confirmation.content, mustacheData);
-      message = confirmation.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+      message = Handlebars.compile(confirmation.content)(mail);
     } else {
       const EmailTemplate = confirmation.emailTemplate;
       const emailHtml = render(EmailTemplate({ previewText: confirmation.previewText, data: confirmation.content }));
 
-      // Render the template
-      const renderedString = Mustache.render(emailHtml, mustacheData);
-
-      message = renderedString.replace(/{{(.+?)}}/g, (_match: any, p1: any) => mail[p1]);
+      message = Handlebars.compile(emailHtml)(mail);
     }
   }
 
@@ -384,30 +403,31 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
       subject: 'Test',
       previewText: 'Test',
       content: `
-Firstname: {{firstName}},
-{{#isDateAfter "2024-08-20"}}
-  Return this string for date after
-{{^}}
-  Else this one for date after
-{{/isDateAfter}}
-
-{{#isDateBefore "2024-08-20"}}
-  Return this string for date before
-{{^}}
-  Else this one for date before
-{{/isDateBefore}}
-
-{{#isTimeAfter "12:00:00"}}
-  Return this string for time after
-{{^}}
-  Else this one for time after
-{{/isTimeAfter}}
-
-{{#isTimeBefore "12:00:00"}}
-  Return this string for time before
-{{^}}
-  Else this one for time before
-{{/isTimeBefore}}
+        Firstname: {{firstName}}
+        {{#isDateAfter "2024-08-20"}}
+        Return this string for date after
+      {{else}}
+        Else this one for date after
+      {{/isDateAfter}}
+    
+      {{#isDateBefore "2024-08-20"}}
+        Return this string for date before
+      {{else}}
+        Else this one for date before
+      {{/isDateBefore}}
+    
+      {{#isTimeAfter "12:00:00" 1}}
+        Return this string for time after
+      {{else}}
+        Else this one for time after
+      {{/isTimeAfter}}
+    
+      {{#isTimeBefore "12:00:00" 1}}
+        Return this string for time before
+      {{else}}
+        Else this one for time before
+      {{/isTimeBefore}}
+    
       `,
     },
     dataReciever: {
@@ -416,7 +436,7 @@ Firstname: {{firstName}},
       previewText: 'Test',
       content: 'Test',
     },
-    secretKey: secretKey,
+    secretKey,
   };
 
   return postWpMail({
