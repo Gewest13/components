@@ -52,7 +52,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
     // Custom Events
     onSubmit, onSuccessfulSubmit, onFailedSubmit,
     // Props
-    debug, recaptcha_site_key, mailSender, mailReciever, confirmationSubject, confirmationPreviewText, confirmationEmail, confirmationEmailTemplate,
+    debug, recaptcha_site_key, mailSender, mailReciever, confirmationSubject, confirmationPreviewText, confirmationEmail, confirmationEmailTemplate, dataRecieverEmail, dataRecieverSubject, dataRecieverPreviewText,
     // HTML Props and Container
     Container = 'div', ...rest
   } = props;
@@ -88,9 +88,9 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
       },
       dataReciever: {
         id: mailReciever.map(({ databaseId }) => databaseId),
-        subject: props.dataRecieverSubject!,
-        previewText: props.dataRecieverPreviewText!,
-        content: props.dataRecieverEmail,
+        subject: dataRecieverSubject!,
+        previewText: dataRecieverPreviewText!,
+        content: dataRecieverEmail,
       },
       sender: {
         id: mailSender.databaseId,
