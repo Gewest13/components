@@ -138,6 +138,7 @@ interface IpostWpMail {
   api_url: string;
   wordpress_username: string;
   wordpress_password: string;
+  debug?: boolean;
 }
 
 export interface EmailBody {
@@ -212,7 +213,7 @@ const fetchPrivateSettings = async ({ api_url, token, disableError }: { token: s
   return data;
 };
 
-export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_password }: IpostWpMail & { req: Request }) => {
+export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_password, debug }: IpostWpMail & { req: Request }) => {
   const body = await req.json();
 
   const {
@@ -237,6 +238,8 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
   // if token exist try to fetch private settings (would be the fastest way)
   let data = await fetchPrivateSettings({ api_url, token, disableError: true });
+
+  if (debug) console.log(data);
 
   // if token is invalid try to fetch new token (this will happen if the token is expired)
   if (!data) {
