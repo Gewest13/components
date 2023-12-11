@@ -339,7 +339,12 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
       message = Handlebars.compile(confirmation.content)(mail);
     } else {
       const EmailTemplate = confirmation.emailTemplate;
+
+      if (debug) console.log('EmailTemplate', EmailTemplate);
+
       const emailHtml = render(EmailTemplate({ previewText: confirmation.previewText, data: confirmation.content }));
+
+      if (debug) console.log('emailHtml', emailHtml);
 
       message = Handlebars.compile(emailHtml)(mail);
     }
