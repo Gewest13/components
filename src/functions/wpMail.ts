@@ -368,11 +368,24 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
       //   `)(React)({ previewText: confirmation.previewText, data: flexibleContent })
       // );
 
+      // const emailHtml = render(
+      //   Function('React', `
+      //     return function({ previewText, data }) {
+      //       return React.createElement(
+      //         'div',
+      //         null,
+      //         ${EmailTemplate}
+      //       );
+      //     };
+      //   `)(React)({ previewText: confirmation.previewText, data: flexibleContent })
+      // );
+
       const emailHtml = render(
         Function('React', `
-          return function({ previewText, data }) {
+          return function ConfirmationEmail(param) {
+            let { data, previewText } = param;
             return React.createElement(
-              'div',
+              React.Fragment,
               null,
               ${EmailTemplate}
             );
