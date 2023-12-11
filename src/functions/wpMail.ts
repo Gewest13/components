@@ -335,7 +335,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   }
 
   if (confirmation && confirmation.content) {
-    if (typeof message === 'string') {
+    if (typeof confirmation.content === 'string') {
       message = Handlebars.compile(confirmation.content)(mail);
     } else {
       const EmailTemplate = confirmation.emailTemplate;
