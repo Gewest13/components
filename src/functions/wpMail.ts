@@ -347,12 +347,16 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
       // eslint-disable-next-line no-new-func
       const emailHtml = render(new Function(`return ${EmailTemplate}`)({ previewText: confirmation.previewText, data: flexibleContent }));
 
+      if (debug) console.log('emailHtml', emailHtml);
+
       message = Handlebars.compile(emailHtml)(mail);
     }
   }
 
   const messageRecipientSubject = dataReciever.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
   const messageRecipient = dataReciever.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+
+  if (debug) console.log('getSmtpAccountMailReciever', getSmtpAccountMailReciever);
 
   const mailData = {
     from: SENDER_MAIL_USERNAME,
