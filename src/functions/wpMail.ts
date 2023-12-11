@@ -242,13 +242,13 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   if (debug) console.log(data);
 
   // if token is invalid try to fetch new token (this will happen if the token is expired)
-  if (!data) {
+  if (!data.allPrivateSettings) {
     token = await fetchToken({ api_url, wordpress_username, wordpress_password });
     data = await fetchPrivateSettings({ api_url, token, disableError: false });
   }
 
   // if data is still invalid return error (this will hapen if password or username is wrong)
-  if (!data) {
+  if (!data.allPrivateSettings) {
     return NextResponse.json({ message: 'Something went wrong logging in the wordpress', error: JSON.stringify(data) }, { status: 500 });
   }
 
