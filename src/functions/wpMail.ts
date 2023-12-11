@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React from 'react';
+// import React from 'react';
 
 import { render } from '@react-email/render';
 import Handlebars  from 'handlebars';
@@ -349,19 +349,22 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
       // I'm not sure if it is possible since it's inside a function
       // eslint-disable-next-line no-new-func
       // const emailHtml = render(new Function('return ' + EmailTemplate)()({ previewText: confirmation.previewText, data: flexibleContent }));
-      const emailComponent = Function('React', `
-        return function ConfirmationEmail(param) {
-          let { data, previewText } = param;
-          return React.createElement(
-            React.Fragment,
-            null,
-            ${EmailTemplate}
-          );
-        };
-      `)(React);
+      // const emailComponent = Function('React', `
+      //   return function ConfirmationEmail(param) {
+      //     let { data, previewText } = param;
+      //     return React.createElement(
+      //       React.Fragment,
+      //       null,
+      //       ${EmailTemplate}
+      //     );
+      //   };
+      // `)(React);
+      // Assuming EmailTemplate is the string you provided
+      const emailComponent = eval(`(${EmailTemplate})`);
 
       if (debug) console.log('emailComponent', emailComponent);
 
+      // Now emailComponent is a function that you can call with parameters
       const emailHtml = render(emailComponent({ previewText: confirmation.previewText, data: flexibleContent }));
 
       if (debug) console.log('emailHtml', emailHtml);
