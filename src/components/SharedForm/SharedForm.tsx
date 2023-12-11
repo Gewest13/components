@@ -83,7 +83,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
       confirmation: {
         subject: confirmationSubject!,
         previewText: confirmationPreviewText!,
-        content: confirmationEmail.toString(),
+        content: typeof confirmationEmail === 'string' ? confirmationEmail : JSON.stringify(confirmationEmail),
         emailTemplate: confirmationEmailTemplate.toString(),
       },
       dataReciever: {
