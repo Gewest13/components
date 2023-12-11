@@ -360,6 +360,8 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
         };
       `)(React);
 
+      if (debug) console.log('emailComponent', emailComponent);
+
       const emailHtml = render(emailComponent({ previewText: confirmation.previewText, data: flexibleContent }));
 
       if (debug) console.log('emailHtml', emailHtml);
