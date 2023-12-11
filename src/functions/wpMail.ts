@@ -345,7 +345,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
       // Be sure to use a recaptcha key so it is not possible to inject code
       // I'm not sure if it is possible since it's inside a function
       // eslint-disable-next-line no-new-func
-      const emailHtml = render(new Function(`return ${EmailTemplate}`)({ previewText: confirmation.previewText, data: flexibleContent }));
+      const emailHtml = render(new Function('return ' + EmailTemplate)()({ previewText: confirmation.previewText, data: flexibleContent }));
 
       if (debug) console.log('emailHtml', emailHtml);
 
