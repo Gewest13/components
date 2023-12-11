@@ -79,7 +79,10 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
     let emailTemplate: any = null;
 
     if (confirmationEmailTemplate) {
-      const Render = (await import('@react-email/components')).render;
+      const Render = (await import('@react-email/render')).render;
+
+      if (debug) console.log('ConfirmationEmailTemplate: ', confirmationEmailTemplate);
+      if (debug) console.log('Render: ', Render);
 
       emailTemplate = Render(confirmationEmailTemplate({ previewText: confirmationPreviewText, data: confirmationEmail }));
     }
