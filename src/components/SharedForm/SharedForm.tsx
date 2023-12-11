@@ -3,7 +3,6 @@ import React, { forwardRef } from 'react';
 import { createContainer } from '../../functions/createContainer';
 import { EmailBody } from '../../functions/wpMail';
 import { RecaptchaV3, getToken } from '../RecaptchaV3/RecaptchaV3';
-
 export interface ISharedFormProps {
   // ** Preferable a form element */
   Container: React.ReactElement<HTMLDivElement> | React.ForwardRefExoticComponent<any | React.RefAttributes<HTMLDivElement>>
