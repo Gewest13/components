@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { render } from '@react-email/render';
 import Handlebars  from 'handlebars';
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -58,7 +59,6 @@ Handlebars.registerHelper('isNight', function (options) {
   // @ts-ignore
   return currentHour >= 0 && currentHour < 6 ? options.fn(this) : options.inverse(this);
 });
-
 
 const getAllPrivateSettings = `
   query GetAllPrivateSettings {
@@ -162,8 +162,7 @@ export interface EmailBody {
     subject?: string; // Subject for the confirmation email
     previewText?: string; // Preview text for the confirmation email
     content?: string; // Content for the confirmation email
-    // Not possible... I think
-    // emailTemplate?: any; // React component for the confirmation email
+    emailTemplate?: any; // React component for the confirmation email
   };
 
   /** Recaptcha response string */
@@ -334,29 +333,23 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     messageSubject = Handlebars.compile(confirmation.subject)(mail);
   }
 
-  if (confirmation?.content) {
-    message = Handlebars.compile(confirmation.content)(mail);
+  if (confirmation && confirmation.content) {
+    if (!confirmation.emailTemplate) {
+      message = Handlebars.compile(confirmation.content)(mail);
+    } else {
+      const EmailTemplate = confirmation.emailTemplate;
+
+      if (debug) console.log('EmailTemplate', EmailTemplate);
+
+      const flexibleContent = JSON.parse(confirmation.content);
+      // Be sure to use a recaptcha key so it is not possible to inject code
+      // I'm not sure if it is possible since it's inside a function
+      // eslint-disable-next-line no-new-func
+      const emailHtml = render(new Function(`return ${EmailTemplate}`)({ previewText: confirmation.previewText, data: flexibleContent }));
+
+      message = Handlebars.compile(emailHtml)(mail);
+    }
   }
-
-  // if (confirmation && confirmation.content) {
-  //   if (!confirmation.emailTemplate) {
-  //   } else {
-  //     const EmailTemplate = confirmation.emailTemplate;
-
-  //     if (debug) console.log('EmailTemplate', EmailTemplate);
-
-  //     // Be sure to use a recaptcha key so it is not possible to inject code
-  //     // I'm not sure if it is possible since it's inside a function
-  //     const recreatedFunction = new Function('return ' + EmailTemplate)();
-  //     const flexibleContent = JSON.parse(confirmation.content);
-
-  //     const emailHtml = render(recreatedFunction({ previewText: confirmation.previewText, data: flexibleContent }));
-
-  //     if (debug) console.log('emailHtml', emailHtml);
-
-  //     message = Handlebars.compile(emailHtml)(mail);
-  //   }
-  // }
 
   const messageRecipientSubject = dataReciever.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
   const messageRecipient = dataReciever.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);

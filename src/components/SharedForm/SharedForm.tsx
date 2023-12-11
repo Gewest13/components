@@ -3,6 +3,7 @@ import React, { forwardRef } from 'react';
 import { createContainer } from '../../functions/createContainer';
 import { EmailBody } from '../../functions/wpMail';
 import { RecaptchaV3, getToken } from '../RecaptchaV3/RecaptchaV3';
+
 export interface ISharedFormProps {
   // ** Preferable a form element */
   Container: React.ReactElement<HTMLDivElement> | React.ForwardRefExoticComponent<any | React.RefAttributes<HTMLDivElement>>
@@ -76,24 +77,14 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
 
     onSubmit && onSubmit(e, formData);
 
-    let emailTemplate: any = null;
-
-    if (confirmationEmailTemplate) {
-      const Render = (await import('@react-email/render')).render;
-
-      if (debug) console.log('ConfirmationEmailTemplate: ', confirmationEmailTemplate);
-      if (debug) console.log('Render: ', Render);
-
-      emailTemplate = Render(confirmationEmailTemplate({ previewText: confirmationPreviewText, data: confirmationEmail }));
-    }
-
     const body: EmailBody = {
       recaptcha: await getToken() as string,
       mail: formData,
       confirmation: {
         subject: confirmationSubject!,
         previewText: confirmationPreviewText!,
-        content: emailTemplate || confirmationEmail,
+        content: typeof confirmationEmail === 'string' ? confirmationEmail : JSON.stringify(confirmationEmail),
+        emailTemplate: confirmationEmailTemplate.toString(),
       },
       dataReciever: {
         id: mailReciever.map(({ databaseId }) => databaseId),
