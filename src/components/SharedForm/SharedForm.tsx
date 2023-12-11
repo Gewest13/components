@@ -77,14 +77,21 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
 
     onSubmit && onSubmit(e, formData);
 
+    let emailTemplate: any = null;
+
+    if (confirmationEmailTemplate) {
+      const Render = (await import('@react-email/components')).render;
+
+      emailTemplate = Render(confirmationEmailTemplate({ previewText: confirmationPreviewText, data: confirmationEmail }));
+    }
+
     const body: EmailBody = {
       recaptcha: await getToken() as string,
       mail: formData,
       confirmation: {
         subject: confirmationSubject!,
         previewText: confirmationPreviewText!,
-        content: typeof confirmationEmail === 'string' ? confirmationEmail : JSON.stringify(confirmationEmail),
-        emailTemplate: confirmationEmailTemplate.toString(),
+        content: emailTemplate || confirmationEmail,
       },
       dataReciever: {
         id: mailReciever.map(({ databaseId }) => databaseId),
