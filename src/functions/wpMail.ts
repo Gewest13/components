@@ -349,49 +349,18 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
       // I'm not sure if it is possible since it's inside a function
       // eslint-disable-next-line no-new-func
       // const emailHtml = render(new Function('return ' + EmailTemplate)()({ previewText: confirmation.previewText, data: flexibleContent }));
+      const emailComponent = Function('React', `
+        return function ConfirmationEmail(param) {
+          let { data, previewText } = param;
+          return React.createElement(
+            React.Fragment,
+            null,
+            ${EmailTemplate}
+          );
+        };
+      `)(React);
 
-      // const emailHtml = render(
-      //   new Function(
-      //     'React',
-      //     // @ts-ignore
-      //     'return ' + Babel.transform(EmailTemplate, { presets: ['@babel/preset-react'] }).code
-      //   )(React)({ previewText: confirmation.previewText, data: flexibleContent })
-      // );
-
-      // const emailHtml = render(
-      //   Function('React', `
-      //     return React.createElement(
-      //       'div',
-      //       null,
-      //       ${EmailTemplate}
-      //     );
-      //   `)(React)({ previewText: confirmation.previewText, data: flexibleContent })
-      // );
-
-      // const emailHtml = render(
-      //   Function('React', `
-      //     return function({ previewText, data }) {
-      //       return React.createElement(
-      //         'div',
-      //         null,
-      //         ${EmailTemplate}
-      //       );
-      //     };
-      //   `)(React)({ previewText: confirmation.previewText, data: flexibleContent })
-      // );
-
-      const emailHtml = render(
-        Function('React', `
-          return function ConfirmationEmail(param) {
-            let { data, previewText } = param;
-            return React.createElement(
-              React.Fragment,
-              null,
-              ${EmailTemplate}
-            );
-          };
-        `)(React)({ previewText: confirmation.previewText, data: flexibleContent })
-      );
+      const emailHtml = render(emailComponent({ previewText: confirmation.previewText, data: flexibleContent }));
 
       if (debug) console.log('emailHtml', emailHtml);
 
