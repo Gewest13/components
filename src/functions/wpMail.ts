@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import React from 'react';
+
 import { render } from '@react-email/render';
 import Handlebars  from 'handlebars';
 import { cookies } from "next/headers";
@@ -341,11 +343,42 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
       if (debug) console.log('EmailTemplate', EmailTemplate);
 
+
       const flexibleContent = JSON.parse(confirmation.content);
       // Be sure to use a recaptcha key so it is not possible to inject code
       // I'm not sure if it is possible since it's inside a function
       // eslint-disable-next-line no-new-func
-      const emailHtml = render(new Function('return ' + EmailTemplate)()({ previewText: confirmation.previewText, data: flexibleContent }));
+      // const emailHtml = render(new Function('return ' + EmailTemplate)()({ previewText: confirmation.previewText, data: flexibleContent }));
+
+      // const emailHtml = render(
+      //   new Function(
+      //     'React',
+      //     // @ts-ignore
+      //     'return ' + Babel.transform(EmailTemplate, { presets: ['@babel/preset-react'] }).code
+      //   )(React)({ previewText: confirmation.previewText, data: flexibleContent })
+      // );
+
+      // const emailHtml = render(
+      //   Function('React', `
+      //     return React.createElement(
+      //       'div',
+      //       null,
+      //       ${EmailTemplate}
+      //     );
+      //   `)(React)({ previewText: confirmation.previewText, data: flexibleContent })
+      // );
+
+      const emailHtml = render(
+        Function('React', `
+          return function({ previewText, data }) {
+            return React.createElement(
+              'div',
+              null,
+              ${EmailTemplate}
+            );
+          };
+        `)(React)({ previewText: confirmation.previewText, data: flexibleContent })
+      );
 
       if (debug) console.log('emailHtml', emailHtml);
 
