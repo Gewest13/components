@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // import React from 'react';
 
+import React from 'react';
+
 import { render } from '@react-email/render';
 import Handlebars  from 'handlebars';
 import { cookies } from "next/headers";
@@ -345,27 +347,18 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
 
       const flexibleContent = JSON.parse(confirmation.content);
-      // Be sure to use a recaptcha key so it is not possible to inject code
-      // I'm not sure if it is possible since it's inside a function
-      // eslint-disable-next-line no-new-func
-      // const emailHtml = render(new Function('return ' + EmailTemplate)()({ previewText: confirmation.previewText, data: flexibleContent }));
-      // const emailComponent = Function('React', `
-      //   return function ConfirmationEmail(param) {
-      //     let { data, previewText } = param;
-      //     return React.createElement(
-      //       React.Fragment,
-      //       null,
-      //       ${EmailTemplate}
-      //     );
-      //   };
-      // `)(React);
-      // Assuming EmailTemplate is the string you provided
-      const emailComponent = eval(`(${EmailTemplate})`);
 
-      if (debug) console.log('emailComponent', emailComponent);
+      const EmailComponent = eval(`(${EmailTemplate})`);
 
-      // Now emailComponent is a function that you can call with parameters
-      const emailHtml = render(emailComponent({ previewText: confirmation.previewText, data: flexibleContent }));
+      if (debug) console.log('EmailComponent', EmailComponent);
+
+      const props = { previewText: confirmation.previewText, data: flexibleContent };
+
+      const emailElement = React.createElement(EmailComponent, props);
+
+      if (debug) console.log('emailElement', emailElement);
+
+      const emailHtml = render(emailElement, {});
 
       if (debug) console.log('emailHtml', emailHtml);
 
