@@ -335,14 +335,19 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   }
 
   if (confirmation && confirmation.content) {
-    if (typeof confirmation.content === 'string') {
+    if (!confirmation.emailTemplate) {
       message = Handlebars.compile(confirmation.content)(mail);
     } else {
       const EmailTemplate = confirmation.emailTemplate;
 
       if (debug) console.log('EmailTemplate', EmailTemplate);
 
-      const emailHtml = render(EmailTemplate({ previewText: confirmation.previewText, data: confirmation.content }));
+      // Be sure to use a recaptcha key so it is not possible to inject code
+      // I'm not sure if it is possible since it's inside a function
+      const recreatedFunction = new Function('return ' + EmailTemplate)();
+      const flexibleContent = JSON.parse(confirmation.content);
+
+      const emailHtml = render(recreatedFunction({ previewText: confirmation.previewText, data: flexibleContent }));
 
       if (debug) console.log('emailHtml', emailHtml);
 
