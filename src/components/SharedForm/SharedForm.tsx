@@ -16,9 +16,9 @@ export interface ISharedFormProps {
   // ** Confirmation preview text */
   confirmationPreviewText?: string
   // ** This could be anything (object array string). Based off if their is a confirmationEmailTemplate */
-  confirmationEmail: any
+  confirmationEmail: string
   // ** This should be a react email template we should pass this since we want to render the confirmation email template on the server to save extra kb's on client side */
-  confirmationEmailTemplate?: any
+  // confirmationEmailTemplate?: any
   // ** Subject for the data reciever */
   dataRecieverSubject?: string
   // ** Preview text for the data reciever */
@@ -52,7 +52,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
     // Custom Events
     onSubmit, onSuccessfulSubmit, onFailedSubmit,
     // Props
-    debug, recaptcha_site_key, mailSender, mailReciever, confirmationSubject, confirmationPreviewText, confirmationEmail, confirmationEmailTemplate, dataRecieverEmail, dataRecieverSubject, dataRecieverPreviewText,
+    debug, recaptcha_site_key, mailSender, mailReciever, confirmationSubject, confirmationPreviewText, confirmationEmail, dataRecieverEmail, dataRecieverSubject, dataRecieverPreviewText,
     // HTML Props and Container
     Container = 'div', ...rest
   } = props;
@@ -83,8 +83,9 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
       confirmation: {
         subject: confirmationSubject!,
         previewText: confirmationPreviewText!,
-        content: typeof confirmationEmail === 'string' ? confirmationEmail : JSON.stringify(confirmationEmail),
-        emailTemplate: confirmationEmailTemplate.toString(),
+        content: confirmationEmail,
+        // Deprecated
+        // emailTemplate: confirmationEmailTemplate.toString(),
       },
       dataReciever: {
         id: mailReciever.map(({ databaseId }) => databaseId),

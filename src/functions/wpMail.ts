@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // import React from 'react';
 
-import React from 'react';
+// import React from 'react';
 
-import { render } from '@react-email/render';
+// import { render } from '@react-email/render';
 import Handlebars  from 'handlebars';
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -166,7 +166,10 @@ export interface EmailBody {
     subject?: string; // Subject for the confirmation email
     previewText?: string; // Preview text for the confirmation email
     content?: string; // Content for the confirmation email
-    emailTemplate?: any; // React component for the confirmation email
+    // Deprecated, please render emailTemplate on the server side on the project it self. This will safe a render each time a mail is sent.
+    // This approach is more sustainable and will save resources for the client and the server. 🌱
+    // Send the emailTemplate as content
+    // emailTemplate?: any; // React component for the confirmation email
   };
 
   /** Recaptcha response string */
@@ -337,33 +340,8 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     messageSubject = Handlebars.compile(confirmation.subject)(mail);
   }
 
-  if (confirmation && confirmation.content) {
-    if (!confirmation.emailTemplate) {
-      message = Handlebars.compile(confirmation.content)(mail);
-    } else {
-      const EmailTemplate = confirmation.emailTemplate;
-
-      if (debug) console.log('EmailTemplate', EmailTemplate);
-
-
-      const flexibleContent = JSON.parse(confirmation.content);
-
-      const EmailComponent = eval(`(${EmailTemplate})`);
-
-      if (debug) console.log('EmailComponent', EmailComponent);
-
-      const props = { previewText: confirmation.previewText, data: flexibleContent };
-
-      const emailElement = React.createElement(EmailComponent, props);
-
-      if (debug) console.log('emailElement', emailElement);
-
-      const emailHtml = render(emailElement, {});
-
-      if (debug) console.log('emailHtml', emailHtml);
-
-      message = Handlebars.compile(emailHtml)(mail);
-    }
+  if (confirmation?.content) {
+    message = Handlebars.compile(confirmation.content)(mail);
   }
 
   const messageRecipientSubject = dataReciever.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
