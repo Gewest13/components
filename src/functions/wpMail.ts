@@ -366,7 +366,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
   try {
     // First send mail to reciever
-    await sendNodeMailer(transport, clientData);
+    if (message.length && mail.email) await sendNodeMailer(transport, clientData);
     // Then send mail to sender
     await sendNodeMailer(transport, mailData);
 
