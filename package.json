@@ -33,11 +33,11 @@
   "homepage": "https://github.com/Gewest13/components",
   "peerDependencies": {
     "@react-email/components": "^0.0.11",
+    "handlebars": "^4.7.8",
     "next": "^14.0.3",
     "nodemailer": "^6.9.7",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "handlebars": "^4.7.8",
     "textsplitter": "^9.6.0"
   },
   "devDependencies": {
@@ -63,6 +63,7 @@
     "@types/jest": "^29.5.0",
     "@types/nodemailer": "^6.4.14",
     "@types/react": "^18.0.33",
+    "@types/react-transition-group": "^4.4.10",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "autoprefixer": "^10.4.16",
@@ -98,5 +99,8 @@
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "typescript-plugin-css-modules": "^5.0.2"
+  },
+  "dependencies": {
+    "react-transition-group": "^4.4.5"
   }
 }
