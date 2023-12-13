@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-// import React from 'react';
 
-// import React from 'react';
-
-// import { render } from '@react-email/render';
 import Handlebars  from 'handlebars';
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -113,7 +109,7 @@ const loginMutation = `
   }
 `;
 
-interface TPrivateSettings {
+interface propsPrivateSettings {
   recaptcha: {
     secretKey: string;
     siteKey: {
@@ -137,7 +133,20 @@ interface TPrivateSettings {
   };
 }
 
-interface IpostWpMail {
+export interface wpMailResponse {
+  translationKey:
+  'success' |
+  'error' |
+  'unauthorized' |
+  'noPrivateSettings' |
+  'noSender' |
+  'noReciever' |
+  'bot';
+  message: string;
+  error?: string;
+}
+
+interface propsPostWpMail {
   api_url: string;
   wordpress_username: string;
   wordpress_password: string;
@@ -154,7 +163,7 @@ export interface EmailBody {
   };
 
   /** Extra confirmation data for the client */
-  dataReciever: {
+  dataReceiver: {
     id: (string | number)[]; // Array of unique identifiers for data retrieval
     subject: string; // Subject for data retrieval
     previewText: string; // Preview text for data retrieval
@@ -193,7 +202,7 @@ async function sendNodeMailer(
   }
 }
 
-const fetchToken = async ({ wordpress_username, wordpress_password, api_url }: IpostWpMail) => {
+const fetchToken = async ({ wordpress_username, wordpress_password, api_url }: propsPostWpMail) => {
   const result = await fetch(api_url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -219,7 +228,7 @@ const fetchPrivateSettings = async ({ api_url, token, disableError }: { token: s
   return data;
 };
 
-export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_password, debug }: IpostWpMail & { req: Request }) => {
+export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_password, debug }: propsPostWpMail & { req: Request }) => {
   const body = await req.json();
 
   const {
@@ -227,7 +236,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     recaptcha,
     secretKey,
     sender,
-    dataReciever,
+    dataReceiver,
     confirmation,
   } = body as EmailBody;
 
@@ -253,13 +262,26 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     data = await fetchPrivateSettings({ api_url, token, disableError: false });
   }
 
-  // if data is still invalid return error (this will hapen if password or username is wrong)
+  // if data is still invalid return error (this will happen if password or username is wrong)
   if (!data.allPrivateSettings) {
-    return NextResponse.json({ message: 'Something went wrong logging in the wordpress', error: JSON.stringify(data) }, { status: 500 });
+    return NextResponse.json({
+      translationKey: 'unauthorized',
+      message: 'Something went wrong logging in the wordpress',
+      error: JSON.stringify(data)
+    } as wpMailResponse,
+    { status: 401 });
+  }
+
+  if (!data.allPrivateSettings.nodes.length || !data.allPrivateSettings.nodes[0] || !data.allPrivateSettings.nodes[0].acfPrivate) {
+    return NextResponse.json({
+      translationKey: 'noPrivateSettings',
+      message: 'No private settings found. Please create a private settings inside the wordpress.',
+    } as wpMailResponse,
+    { status: 500 });
   }
 
   const formattedData = data.allPrivateSettings.nodes[0].acfPrivate;
-  const privateSettings: TPrivateSettings = formattedData;
+  const privateSettings: propsPrivateSettings = formattedData;
 
   const RECAPTCHA_SECRET_KEY = privateSettings.recaptcha.secretKey;
 
@@ -269,25 +291,31 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
     if (json.success !== undefined && !json.success) {
       return NextResponse.json({
-        line: 203,
-        error: 'Bot detected', message: 'Something went wrong. Please contact the site administrator.',
-      }, { status: 500 });
+        translationKey: 'bot',
+        error: JSON.stringify(json),
+        message: 'Something went wrong. Please contact the site administrator.',
+      } as wpMailResponse,
+      { status: 500 });
     }
   }
 
   // Important otherwise no mail will be sent
   const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(sender.id));
 
-  // Important otherwise the mail reciever will not get any emails
-  // We will use filter here since more than one mail reciever can be used
-  const getSmtpAccountMailReciever = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataReciever.id.map((id) => String(id)).includes(String(smtpAccount.databaseId)));
+  // Important otherwise the mail receiver will not get any emails
+  // We will use filter here since more than one mail receiver can be used
+  const getSmtpAccountMailReceiver = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataReceiver.id.map((id) => String(id)).includes(String(smtpAccount.databaseId)));
 
   if (!getSmtpAccountMailSender) {
     return NextResponse.json({ message: `SMTP account mail reciever not found. Check under SMTP accounts if a post with ${sender.id} ID exist.` }, { status: 500 });
   }
 
-  if (!getSmtpAccountMailReciever) {
-    return NextResponse.json({ message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataReciever.id[0]} ID exist.` }, { status: 500 });
+  if (!getSmtpAccountMailReceiver.length) {
+    return NextResponse.json({
+      translationKey: 'noReciever',
+      message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataReceiver.id[0]} ID exist.`
+    } as wpMailResponse,
+    { status: 500 });
   }
 
   const {
@@ -305,9 +333,10 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
   if (!SENDER_MAIL_PASSWORD || !SENDER_MAIL_PORT || !SENDER_MAIL_SERVER || !SENDER_MAIL_USERNAME) {
     return NextResponse.json({
-      line: 236,
+      translationKey: 'noSender',
       message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${sender.id}`,
-    }, { status: 500 });
+    } as wpMailResponse,
+    { status: 500 });
   }
 
   const transport = (nodemailer as any).createTransport({
@@ -327,10 +356,11 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   } catch (error) {
     console.log(error);
     return NextResponse.json({
-      line: 255,
-      error,
+      translationKey: 'error',
       message: 'Something went wrong. Please contact the site administrator.',
-    }, { status: 500 });
+      error,
+    } as wpMailResponse,
+    { status: 500 });
   }
 
   let messageSubject = '';
@@ -344,14 +374,14 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     message = Handlebars.compile(confirmation.content)(mail);
   }
 
-  const messageRecipientSubject = dataReciever.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
-  const messageRecipient = dataReciever.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  const messageRecipientSubject = dataReceiver.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  const messageRecipient = dataReceiver.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
 
-  if (debug) console.log('getSmtpAccountMailReciever', getSmtpAccountMailReciever);
+  if (debug) console.log('getSmtpAccountMailReceiver', getSmtpAccountMailReceiver);
 
   const mailData = {
     from: SENDER_MAIL_USERNAME,
-    to: getSmtpAccountMailReciever!.map(({ smtpAccount }) => smtpAccount.acfSmtp.username),
+    to: getSmtpAccountMailReceiver!.map(({ smtpAccount }) => smtpAccount.acfSmtp.username),
     subject: messageRecipientSubject,
     html: messageRecipient,
   };
@@ -372,23 +402,28 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
     const oneMonthFromNow = new Date(Date.now() + 60 * 60 * 1000 * 24 * 30);
 
-    return NextResponse.json({ message: 'The mail was successfully sent.' }, {
+    return NextResponse.json({
+      translationKey: 'success',
+      message: 'The mail was successfully sent.'
+    } as wpMailResponse,
+    {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
         'Set-Cookie': `token=${token}; HttpOnly; Secure; SameSite=Strict; Expires=${oneMonthFromNow.toUTCString()}`,
-      },
+      }
     });
   } catch (error: any) {
     return NextResponse.json({
-      line: 299,
-      error: error.message,
+      translationKey: 'error',
       message: 'Something went wrong. Please contact the site administrator.',
-    }, { status: 500 });
+      error: error.message,
+    } as wpMailResponse,
+    { status: 500 });
   }
 };
 
-export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_username }: IpostWpMail & { req: Request }) => {
+export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_username }: propsPostWpMail & { req: Request }) => {
   const { searchParams } = new URL(req.url);
   const { id, email_reciever, secretKey } = Object.fromEntries(searchParams);
 
@@ -407,7 +442,7 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
       subject: 'Test',
       previewText: 'Test',
       content: `
-        Firstname: {{firstName}}
+      First name: {{firstName}}
         {{#isDateAfter "2024-08-20"}}
         Return this string for date after
       {{else}}
@@ -431,10 +466,9 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
       {{else}}
         Else this one for time before
       {{/isTimeBefore}}
-    
       `,
     },
-    dataReciever: {
+    dataReceiver: {
       id: [id],
       subject: 'Test',
       previewText: 'Test',
