@@ -19,14 +19,14 @@ export interface ISharedFormProps {
   confirmationEmail: string
   // ** This should be a react email template we should pass this since we want to render the confirmation email template on the server to save extra kb's on client side */
   // confirmationEmailTemplate?: any
-  // ** Subject for the data reciever */
+  // ** Subject for the data receiver */
   dataReceiverSubject?: string
-  // ** Preview text for the data reciever */
+  // ** Preview text for the data receiver */
   dataReceiverPreviewText?: string
-  // ** This should be a string since their is no template option for the data reciever */
+  // ** This should be a string since their is no template option for the data receiver */
   dataReceiverEmail: string
-  // ** A list of SMTP account ids to send the data reciever email to */
-  mailReciever: {
+  // ** A list of SMTP account ids to send the data receiver email to */
+  mailReceiver: {
     databaseId: (number | string)
   }[]
   // ** The database ID of the mail sender */
@@ -56,7 +56,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
     // Get the translation key
     setTranslationKey,
     // Props
-    debug, recaptcha_site_key, mailSender, mailReciever, confirmationSubject, confirmationPreviewText, confirmationEmail, dataReceiverEmail, dataReceiverSubject: dataReceiverSubject, dataReceiverPreviewText,
+    debug, recaptcha_site_key, mailSender, mailReceiver, confirmationSubject, confirmationPreviewText, confirmationEmail, dataReceiverEmail, dataReceiverSubject: dataReceiverSubject, dataReceiverPreviewText,
     // HTML Props and Container
     Container = 'div', ...rest
   } = props;
@@ -94,7 +94,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
         // emailTemplate: confirmationEmailTemplate.toString(),
       },
       dataReceiver: {
-        id: mailReciever.map(({ databaseId }) => databaseId),
+        id: mailReceiver.map(({ databaseId }) => databaseId),
         subject: dataReceiverSubject!,
         previewText: dataReceiverPreviewText!,
         content: dataReceiverEmail,

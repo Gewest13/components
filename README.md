@@ -10,6 +10,7 @@ Gewest13 Library Shared Components is a curated repository of reusable UI assets
    - [SharedForm](#sharedform)
    - [Swiper](#swiper)
    - [Video](#video)
+   - [SharedTypography](#sharedtypography)
 
 2. **Hooks**
    - [useWindowSize](#usewindowsize)
@@ -129,13 +130,12 @@ Example:
   Container={<form className="example" />}
   confirmationSubject="Confirmation Subject"
   confirmationPreviewText="Confirmation Preview Text"
-  confirmationEmail="<p>Hey {{firstname}}</p>"
-  // React email template here
-  confirmationEmailTemplate={null}
-  dataRecieverSubject="Data Receiver Subject"
-  dataRecieverPreviewText="Data Receiver Preview Text"
-  dataRecieverEmail="<p>First name: {{firstname}}</p>"
-  mailReciever={[{databaseId: 3, databaseId: 2, databaseId: 1}]}
+  // Or render a template on the server on build
+  confirmationEmail="<p>Hey {{firstName}}</p>"
+  dataReceiverSubject="Data Receiver Subject"
+  dataReceiverPreviewText="Data Receiver Preview Text"
+  dataReceiverEmail="<p>First name: {{firstName}}</p>"
+  mailReceiver={[{databaseId: 3, databaseId: 2, databaseId: 1}]}
   mailSender={{ databaseId: 4 }}
   recaptcha_site_key={recaptcha}
   onSubmit={handleFormSubmit}
@@ -213,6 +213,37 @@ Example:
     <button onClick={() => videoRef.current.playFullScreen()}>Play movie</button>
   )}
 </FullVideo>
+```
+
+### SharedTypography
+Example:
+```jsx
+'use client';
+
+import React from 'react';
+
+import { SharedTypography } from '@gewest13/components/dist/SharedTypography';
+
+import { vwsizes } from 'config';
+
+import styles from './Typography.module.scss';
+
+export interface TTypography {
+  size: TfontSizes;
+  className?: string;
+}
+
+export default function Typography(props: React.ComponentProps<typeof SharedTypography> & TTypography) {
+  const { className, size } = props;
+
+  return (
+    <SharedTypography
+      {...props}
+      className={`${styles[`typography--${size}`]} ${className || ''}`}
+      vwSizes={vwsizes}
+    />
+  );
+}
 ```
 
 ## Hooks

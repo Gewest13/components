@@ -140,7 +140,7 @@ export interface wpMailResponse {
   'unauthorized' |
   'noPrivateSettings' |
   'noSender' |
-  'noReciever' |
+  'noReceiver' |
   'bot';
   message: string;
   error?: string;
@@ -307,12 +307,12 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   const getSmtpAccountMailReceiver = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataReceiver.id.map((id) => String(id)).includes(String(smtpAccount.databaseId)));
 
   if (!getSmtpAccountMailSender) {
-    return NextResponse.json({ message: `SMTP account mail reciever not found. Check under SMTP accounts if a post with ${sender.id} ID exist.` }, { status: 500 });
+    return NextResponse.json({ message: `SMTP account mail receiver not found. Check under SMTP accounts if a post with ${sender.id} ID exist.` }, { status: 500 });
   }
 
   if (!getSmtpAccountMailReceiver.length) {
     return NextResponse.json({
-      translationKey: 'noReciever',
+      translationKey: 'noReceiver',
       message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataReceiver.id[0]} ID exist.`
     } as wpMailResponse,
     { status: 500 });
@@ -395,7 +395,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   };
 
   try {
-    // First send mail to reciever
+    // First send mail to receiver
     if (message.length && mail.email) await sendNodeMailer(transport, clientData);
     // Then send mail to sender
     await sendNodeMailer(transport, mailData);
@@ -425,12 +425,12 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
 export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_username }: propsPostWpMail & { req: Request }) => {
   const { searchParams } = new URL(req.url);
-  const { id, email_reciever, secretKey } = Object.fromEntries(searchParams);
+  const { id, email_receiver, secretKey, content } = Object.fromEntries(searchParams);
 
   const body: EmailBody = {
     mail: {
       name: 'Test',
-      email: email_reciever,
+      email: email_receiver,
       message: 'Test',
       firstName: 'Test',
       lastName: 'Test',
@@ -441,38 +441,13 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
     confirmation: {
       subject: 'Test',
       previewText: 'Test',
-      content: `
-      First name: {{firstName}}
-        {{#isDateAfter "2024-08-20"}}
-        Return this string for date after
-      {{else}}
-        Else this one for date after
-      {{/isDateAfter}}
-    
-      {{#isDateBefore "2024-08-20"}}
-        Return this string for date before
-      {{else}}
-        Else this one for date before
-      {{/isDateBefore}}
-    
-      {{#isTimeAfter "12:00:00" 1}}
-        Return this string for time after
-      {{else}}
-        Else this one for time after
-      {{/isTimeAfter}}
-    
-      {{#isTimeBefore "12:00:00" 1}}
-        Return this string for time before
-      {{else}}
-        Else this one for time before
-      {{/isTimeBefore}}
-      `,
+      content: content || 'Test',
     },
     dataReceiver: {
       id: [id],
       subject: 'Test',
       previewText: 'Test',
-      content: 'Test',
+      content: content || 'Test',
     },
     secretKey,
   };
