@@ -23,7 +23,7 @@ export const ButtonTemplate = forwardRef<HTMLAnchorElement | HTMLButtonElement, 
     <SharedLink
       data-margin={!!margins}
       href={src.url} target={src.target}
-      style={cssMarginVars(margins, { vwSizes: vwSizes })}
+      style={cssMarginVars(margins, vwSizes)}
       ref={ref}
       {...rest}
     >

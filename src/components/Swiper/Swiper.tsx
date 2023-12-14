@@ -4,7 +4,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } fr
 
 import styles from './Swiper.module.scss';
 import { useWindowSize } from '../../hooks/useWindowSize';
-import { lerp } from '../../utils/math';
+import { lerp } from '../../utils/lerp';
 
 interface ISwiperCard {
   children: React.ReactNode;

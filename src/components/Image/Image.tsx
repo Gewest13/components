@@ -47,7 +47,7 @@ export const Image = forwardRef<HTMLDivElement, IImage & Ivwsizes & React.HTMLAt
   const { src, margins, ratios, priority, quality = 70, vwSizes, ...rest } = props
 
   return (
-    <div data-margin={!!margins} style={cssMarginVars(margins, { vwSizes: vwSizes })} ref={ref} {...rest}>
+    <div data-margin={!!margins} style={cssMarginVars(margins, vwSizes)} ref={ref} {...rest}>
       {Object.keys(src).map((key, index) => {
         const item = src[key as 'desktop'] as IImage['src']['desktop'];
         const ratio = ratios[key as 'desktop'] as IImage['ratios']['desktop'];

@@ -28,6 +28,9 @@ Gewest13 Library Shared Components is a curated repository of reusable UI assets
 4. **Utils**
    - [lerp](#lerp)
 
+5. **All CSS imports**
+   - [CSS](#css)
+
 # Components
 Components can be imported individually, or you have the option to import all components at once using the root file index.js. Additionally, you can include the main CSS file named index.css, which is situated within @gewest13/components/dist/index.css. However, for optimal organization, it is recommended to import each CSS file separately for the specific components you are utilizing.
 
@@ -406,3 +409,14 @@ export async function POST(req: any) {
 
 ### lerp
 Description 
+
+## CSS
+Comment out not needed css imports inside layout or app
+
+```jsx
+import '@gewest13/components/dist/ColumnsContainer/ColumnsContainer.css';
+import '@gewest13/components/dist/Image/Image.css';
+import '@gewest13/components/dist/SharedFormConfirmation/SharedFormConfirmation.css';
+import '@gewest13/components/dist/Swiper/Swiper.css';
+import '@gewest13/components/dist/Video/Video.css';
+```

@@ -10,6 +10,39 @@ import postcss from "rollup-plugin-postcss";
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 import typescript from 'rollup-plugin-typescript2';
 
+const components = [
+  { name: 'Image', css: true },
+  { name: 'Video', css: true },
+  { name: 'Swiper', css: true },
+  { name: 'ColumnsContainer', css: true },
+  { name: 'SharedFormConfirmation', css: true },
+  { name: 'SharedTypography' },
+  { name: 'SharedLink' },
+  { name: 'ButtonTemplate' },
+  { name: 'SharedForm' },
+  { name: 'RecaptchaV3' },
+]
+
+const functions = [
+  { name: 'fetchWordpress' },
+  { name: 'draftModeWordpress' },
+  { name: 'margin' },
+  { name: 'wpMail' },
+  { name: 'getRelationshipData' },
+]
+
+const hooks = [
+  { name: 'useWindowSize' },
+  { name: 'useRender' }
+]
+
+const utils = [
+  { name: 'lerp' },
+  { name: 'capitalizeFirstLetter' },
+  { name: 'lowerCaseFirstLetter' },
+  { name: 'removeTrailingSlashUrl' },
+]
+
 const baseConfig = {
   input: [
     'src/index.ts',
@@ -57,34 +90,14 @@ const addDeclaration = ({ pathTs, componentName }) => ({
 
 export default [
   baseConfig,
-  addConfig({ componentName: 'SharedTypography', path: 'src/components/SharedTypography/SharedTypography.tsx' }),
-  addConfig({ componentName: 'SharedLink', path: 'src/components/SharedLink/SharedLink.tsx' }),
-  addConfig({ componentName: 'ButtonTemplate', path: 'src/components/ButtonTemplate/ButtonTemplate.tsx' }),
-  addConfig({ componentName: 'Image', path: 'src/components/Image/Image.tsx', pathCss: 'src/components/Image/Image.module.scss' }),
-  addConfig({ componentName: 'Video', path: 'src/components/Video/Video.tsx', pathCss: 'src/components/Video/Video.module.scss' }),
-  addConfig({ componentName: 'Swiper', path: 'src/components/Swiper/Swiper.tsx', pathCss: 'src/components/Swiper/Swiper.module.scss' }),
-  addConfig({ componentName: 'ColumnsContainer', path: 'src/components/ColumnsContainer/ColumnsContainer.tsx', pathCss: 'src/components/ColumnsContainer/ColumnsContainer.module.scss' }),
-  addConfig({ componentName: 'SharedForm', path: 'src/components/SharedForm/SharedForm.tsx' }),
-  addConfig({ componentName: 'RecaptchaV3', path: 'src/components/RecaptchaV3/RecaptchaV3.tsx' }),
-  addConfig({ componentName: 'fetchWordpress', path: 'src/functions/fetchWordpress.ts' }),
-  addConfig({ componentName: 'draftModeWordpress', path: 'src/functions/draftModeWordpress.ts' }),
-  addConfig({ componentName: 'margin', path: 'src/functions/margin.ts' }),
-  addConfig({ componentName: 'wpMail', path: 'src/functions/wpMail.ts' }),
-  addConfig({ componentName: 'getRelationshipData', path: 'src/functions/getRelationshipData.ts' }),
-  addDeclaration({ componentName: 'SharedTypography', pathTs: 'dist/components/SharedTypography/SharedTypography.d.ts' }),
-  addDeclaration({ componentName: 'SharedLink', pathTs: 'dist/components/SharedLink/SharedLink.d.ts' }),
-  addDeclaration({ componentName: 'ButtonTemplate', pathTs: 'dist/components/ButtonTemplate/ButtonTemplate.d.ts' }),
-  addDeclaration({ componentName: 'Image', pathTs: 'dist/components/Image/Image.d.ts' }),
-  addDeclaration({ componentName: 'Video', pathTs: 'dist/components/Video/Video.d.ts' }),
-  addDeclaration({ componentName: 'Swiper', pathTs: 'dist/components/Swiper/Swiper.d.ts' }),
-  addDeclaration({ componentName: 'ColumnsContainer', pathTs: 'dist/components/ColumnsContainer/ColumnsContainer.d.ts' }),
-  addDeclaration({ componentName: 'SharedForm', pathTs: 'dist/components/SharedForm/SharedForm.d.ts' }),
-  addDeclaration({ componentName: 'RecaptchaV3', pathTs: 'dist/components/RecaptchaV3/RecaptchaV3.d.ts' }),
-  addDeclaration({ componentName: 'fetchWordpress', pathTs: 'dist/functions/fetchWordpress.d.ts' }),
-  addDeclaration({ componentName: 'draftModeWordpress', pathTs: 'dist/functions/draftModeWordpress.d.ts' }),
-  addDeclaration({ componentName: 'margin', pathTs: 'dist/functions/margin.d.ts' }),
-  addDeclaration({ componentName: 'wpMail', pathTs: 'dist/functions/wpMail.d.ts' }),
-  addDeclaration({ componentName: 'getRelationshipData', pathTs: 'dist/functions/getRelationshipData.d.ts' }),
+  ...components.map(({ name, css }) => addConfig({ componentName: name, path: `src/components/${name}/${name}.tsx`, pathCss: css ? `src/components/${name}/${name}.module.scss` : null })),
+  ...components.map(({ name }) => addDeclaration({ componentName: name, pathTs: `dist/components/${name}/${name}.d.ts` })),
+  ...functions.map(({ name }) => addConfig({ componentName: name, path: `src/functions/${name}.ts` })),
+  ...functions.map(({ name }) => addDeclaration({ componentName: name, pathTs: `dist/functions/${name}.d.ts` })),
+  ...hooks.map(({ name }) => addConfig({ componentName: name, path: `src/hooks/${name}.tsx` })),
+  ...hooks.map(({ name }) => addDeclaration({ componentName: name, pathTs: `dist/hooks/${name}.d.ts` })),
+  ...utils.map(({ name }) => addConfig({ componentName: name, path: `src/utils/${name}.ts` })),
+  ...utils.map(({ name }) => addDeclaration({ componentName: name, pathTs: `dist/utils/${name}.d.ts` })),
   {
     input: `dist/index.d.ts`,
     output: [{ file: "dist/index.d.ts", format: "esm" }],

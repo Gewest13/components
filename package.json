@@ -59,6 +59,7 @@
     "@storybook/react": "^7.0.2",
     "@storybook/react-webpack5": "^7.0.2",
     "@storybook/testing-library": "^0.0.14-next.2",
+    "@studio-freight/tempus": "^0.0.38",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.0",
     "@types/nodemailer": "^6.4.14",

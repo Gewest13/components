@@ -73,7 +73,7 @@ export const SharedTypography = forwardRef<TypographyImperativeHandle, TTypograp
         textTransform: uppercase ? 'uppercase' : undefined,
         color,
         display: block ? 'block' : undefined,
-        ...cssMarginVars(margins, { vwSizes: vwSizes }),
+        ...cssMarginVars(margins, vwSizes),
         ...style,
       }}
       dangerouslySetInnerHTML={typeof children === 'string' ? { __html: children } : undefined}

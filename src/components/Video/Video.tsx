@@ -111,7 +111,7 @@ export const VideoComponent = forwardRef<HTMLDivElement, VideoComponentProps & I
   const hasOneVideo = Object.keys(src).length === 1;
 
   return (
-    <div data-margin={!!margins} style={cssMarginVars(margins, { vwSizes: vwSizes })} ref={ref} { ...rest}>
+    <div data-margin={!!margins} style={cssMarginVars(margins, vwSizes)} ref={ref} { ...rest}>
       {children && children}
       {src.mobile && ratios.mobile && (
         <Video data-viewport={`${!hasOneVideo ? 'mobile' : ''}`} src={src.mobile} ratio={ratios.mobile} {...videoAttributes}  />
