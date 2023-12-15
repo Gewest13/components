@@ -41,6 +41,12 @@ const utils = [
   { name: 'capitalizeFirstLetter' },
   { name: 'lowerCaseFirstLetter' },
   { name: 'removeTrailingSlashUrl' },
+  { name: 'calcPercentage' },
+  { name: 'isTouchDevice' },
+  { name: 'asyncTimeout' },
+  { name: 'sanitizeString' },
+  { name: 'removeHTMLTags' },
+  { name: 'convertParagraphToBreaks' },
 ]
 
 const baseConfig = {
