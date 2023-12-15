@@ -33,7 +33,8 @@ const functions = [
 
 const hooks = [
   { name: 'useWindowSize' },
-  { name: 'useRender' }
+  { name: 'useRender' },
+  { name: 'useScroll' }
 ]
 
 const utils = [
