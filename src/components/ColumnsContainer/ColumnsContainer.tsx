@@ -82,7 +82,7 @@ export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProp
   const CreatedContainer = createContainer(Container);
 
   return (
-    <CreatedContainer ref={ref} {...rest} style={{ height: '300vh' }}>
+    <CreatedContainer ref={ref} {...rest}>
       {columns.map((column, index) => {
         return (
           <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''} ${column.className || ''}`} data-grid={true} key={index}>

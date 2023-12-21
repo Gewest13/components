@@ -1,6 +1,7 @@
 import { RefObject } from 'react';
 
 import useScroll from './useScroll';
+import { allVwSizes } from '../functions/vwsize';
 import { calcPercentage } from '../utils/calcPercentage';
 
 interface Parallax {
@@ -27,7 +28,7 @@ const useParallax = (data: Parallax) => {
 
     const scrollPercentage = calcPercentage({ y: elementPositionY - (!topOfPage ? window.innerHeight : 0), until: elementHeight + (!topOfPage ? window.innerHeight : 0) });
 
-    parallaxElementRef.style.transform = `translateY(${scrollPercentage * desktop}px)`;
+    parallaxElementRef.style.transform = `translateY(${allVwSizes(scrollPercentage * desktop, 'desktop')})`;
   })
 };
 
