@@ -12,6 +12,7 @@ export interface TTypography {
   children?: React.ReactNode;
   margins?: Margins;
   block?: boolean;
+  varColor?: string;
   split?: {
     type: 'letters' | 'words' | 'lines';
     open: string;
@@ -32,7 +33,7 @@ export type TTypographyType =
   | ({ tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'li' | 'a' | 'div' | 'small' | 'label' } & DivProps);
 
 export const SharedTypography = forwardRef<TypographyImperativeHandle, TTypographyType & Ivwsizes & TTypography>((props, ref) => {
-  const { tag, children, uppercase, style, color, block, vwSizes, margins, split, ...rest } = props;
+  const { tag, children, uppercase, style, color, varColor, block, vwSizes, margins, split, ...rest } = props;
 
   const typoRef = useRef() as React.MutableRefObject<HTMLButtonElement | HTMLDivElement>;
   const [splitState, setSplitState] = useState<{ container: HTMLElement; destroy: () => void; }>();
@@ -65,13 +66,19 @@ export const SharedTypography = forwardRef<TypographyImperativeHandle, TTypograp
 
   const Tag = tag as React.ElementType;
 
+  let setColor = color;
+
+  if (varColor) {
+    setColor = `var(--color-${varColor})`;
+  }
+
   return (
     <Tag
       ref={typoRef}
       data-margin={!!margins}
       style={{
         textTransform: uppercase ? 'uppercase' : undefined,
-        color,
+        color: setColor,
         display: block ? 'block' : undefined,
         ...cssMarginVars(margins, vwSizes),
         ...style,
