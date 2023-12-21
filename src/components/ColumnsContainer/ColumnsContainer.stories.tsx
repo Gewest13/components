@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 
 import { StoryFn } from "@storybook/react";
 
 import { ColumnsContainer } from "./ColumnsContainer";
+import useParallax from "../../hooks/useParallax";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -12,21 +13,27 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: StoryFn<typeof ColumnsContainer> = ({ ...rest }) => {
+  const parentRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    console.log(ref);
-  }, []);
+  useParallax({
+    parallaxRef: ref,
+    parentRef,
+    desktop: 240,
+    topOfPage: false
+  });
 
   return(
     <ColumnsContainer
       {...rest}
       Container={<div />}
-      ref={ref}
       columns={[
         {
           grids: { desktop: { column: '1 / -1', row: '1 / 2' }, mobile: { column: '1 / -1', row: '1 / 2' } },
-          component: <div />
+          component: <div ref={parentRef} style={{ height: '600px', marginTop: '100vh', backgroundColor: 'red' }}>
+            <h1 ref={ref} >Column 1</h1>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias enim odit dolorem ipsum, laudantium officia quam quibusdam voluptatum dolore fuga aliquam? Consectetur, cum. Ea ut dolore obcaecati iusto et velit!</p>
+          </div>
         }
       ]}
     />

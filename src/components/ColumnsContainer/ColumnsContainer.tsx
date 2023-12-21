@@ -3,7 +3,6 @@ import React, { forwardRef } from 'react';
 import styles from './ColumnsContainer.module.scss';
 import { createContainer } from '../../functions/createContainer';
 import { cssColumRowVars } from '../../functions/grid';
-import useScroll from '../../hooks/useScroll';
 import { ColumnGrid } from '../../interface';
 
 export interface IColumnsContainerProps {
@@ -82,12 +81,8 @@ export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProp
 
   const CreatedContainer = createContainer(Container);
 
-  useScroll((e) => {
-    console.log(e);
-  });
-
   return (
-    <CreatedContainer ref={ref} {...rest} style={{ height: '5000vh' }}>
+    <CreatedContainer ref={ref} {...rest} style={{ height: '300vh' }}>
       {columns.map((column, index) => {
         return (
           <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''} ${column.className || ''}`} data-grid={true} key={index}>
