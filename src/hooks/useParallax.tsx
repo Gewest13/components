@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 
 import useScroll from './useScroll';
-import { allVwSizes } from '../functions/vwsize';
+import { allVwSizes, vwsizes } from '../functions/vwsize';
 import { calcPercentage } from '../utils/calcPercentage';
 
 interface Parallax {
@@ -16,20 +16,34 @@ interface Parallax {
 const useParallax = (data: Parallax) => {
   const { parallaxRef, parentRef, desktop, tablet, mobile, topOfPage = false } = data;
 
-  console.log(tablet, mobile);
+  const setTransformStyle = (size: number, device: string) => {
+    if (parallaxRef.current) {
+      parallaxRef.current.style.translate = `0 ${allVwSizes(size, device)}`;
+    }
+  };
 
   useScroll(() => {
     const { current: scrollElementRef } =  parentRef || parallaxRef;
-    const { current: parallaxElementRef } = parallaxRef;
 
-    if (!scrollElementRef || !parallaxElementRef) return;
+    if (!scrollElementRef || !parallaxRef.current) return;
 
     const { y: elementPositionY, height: elementHeight } = scrollElementRef.getBoundingClientRect();
 
     const scrollPercentage = calcPercentage({ y: elementPositionY - (!topOfPage ? window.innerHeight : 0), until: elementHeight + (!topOfPage ? window.innerHeight : 0) });
 
-    parallaxElementRef.style.transform = `translateY(${allVwSizes(scrollPercentage * desktop, 'desktop')})`;
-  })
+    const deviceType = window.innerWidth <= vwsizes.mobile ? 'mobile' : window.innerWidth <= vwsizes.tablet ? 'tablet' : 'desktop';
+
+    switch (deviceType) {
+      case 'mobile':
+        setTransformStyle(scrollPercentage * (mobile || desktop), 'mobile');
+        break;
+      case 'tablet':
+        setTransformStyle(scrollPercentage * (tablet || desktop), 'tablet');
+        break;
+      default:
+        setTransformStyle(scrollPercentage * desktop, 'desktop');
+    }
+  });
 };
 
 export default useParallax;

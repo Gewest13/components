@@ -20,6 +20,8 @@ const Template: StoryFn<typeof ColumnsContainer> = ({ ...rest }) => {
     parallaxRef: ref,
     parentRef,
     desktop: 240,
+    tablet: 180,
+    mobile: 120,
     topOfPage: false
   });
 
