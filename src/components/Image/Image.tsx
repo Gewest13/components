@@ -47,7 +47,7 @@ export const Image = forwardRef<HTMLDivElement, IImage & Ivwsizes & React.HTMLAt
   const { src, margins, ratios, priority, quality = 70, vwSizes, ...rest } = props
 
   return (
-    <div data-margin={!!margins} style={cssMarginVars(margins, vwSizes)} ref={ref} {...rest}>
+    <span data-margin={!!margins} style={{ ...cssMarginVars(margins, vwSizes), display: 'block' }} ref={ref} {...rest}>
       {Object.keys(src).map((key, index) => {
         const item = src[key as 'desktop'] as IImage['src']['desktop'];
         const ratio = ratios[key as 'desktop'] as IImage['ratios']['desktop'];
@@ -73,7 +73,7 @@ export const Image = forwardRef<HTMLDivElement, IImage & Ivwsizes & React.HTMLAt
         const multiplier = widthDesktop[key as 'desktop'].image / widthDesktop[key as 'desktop'].design;
 
         return (
-          <div data-viewport={key} key={index} className={styles.imageWrap} style={cssRatioVar(ratio)}>
+          <span data-viewport={key} key={index} className={styles.imageWrap} style={cssRatioVar(ratio)}>
             <NextImage
               className={styles.image}
               data-viewport={key}
@@ -86,10 +86,10 @@ export const Image = forwardRef<HTMLDivElement, IImage & Ivwsizes & React.HTMLAt
               loading={priority ? 'eager' : 'lazy'}
               quality={quality}
             />
-          </div>
+          </span>
         )
       })}
-    </div>
+    </span>
   )
 })
 

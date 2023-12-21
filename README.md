@@ -223,9 +223,9 @@ Example:
 ```jsx
 'use client';
 
-import React from 'react';
+import React, { forwardRef, ForwardedRef } from 'react';
 
-import { SharedTypography } from '@gewest13/components/dist/SharedTypography';
+import { SharedTypography, TypographyImperativeHandle } from '@gewest13/components/dist/SharedTypography';
 
 import { vwsizes } from 'config';
 
@@ -236,17 +236,20 @@ export interface TTypography {
   className?: string;
 }
 
-export default function Typography(props: React.ComponentProps<typeof SharedTypography> & TTypography) {
-  const { className, size } = props;
+const Typography = forwardRef((props: React.ComponentProps<typeof SharedTypography> & TTypography, ref: ForwardedRef<TypographyImperativeHandle>) => {
+  const { className, size, ...rest } = props;
 
   return (
     <SharedTypography
-      {...props}
+      {...rest}
+      ref={ref}
       className={`${styles[`typography--${size}`]} ${className || ''}`}
       vwSizes={vwsizes}
     />
   );
-}
+});
+
+export default Typography;
 ```
 
 ## Hooks
