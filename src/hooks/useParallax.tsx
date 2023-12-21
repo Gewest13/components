@@ -13,6 +13,31 @@ interface Parallax {
   topOfPage?: boolean;
 }
 
+/**
+ * Hook to apply a parallax effect to a DOM element.
+ *
+ * @param {Parallax} data - The data for the parallax effect.
+ * @param {React.RefObject<HTMLElement>} data.parallaxRef - The ref of the element to which the parallax effect is applied.
+ * @param {React.RefObject<HTMLElement>} data.parentRef - The ref of the parent element.
+ * @param {number} data.desktop - The amount of parallax effect on desktop devices.
+ * @param {number} [data.tablet] - The amount of parallax effect on tablet devices.
+ * @param {number} [data.mobile] - The amount of parallax effect on mobile devices.
+ * @param {boolean} [data.topOfPage=false] - Whether the parallax effect starts from the top of the page.
+ *
+ * @example
+ * ```tsx
+ * const parallaxRef = useRef(null);
+ *
+ * useParallax({
+ *   parallaxRef: parallaxRef,
+  *  desktop: 100,
+ *   tablet: 50,
+ *   mobile: 25,
+ * });
+ *
+ * return <div ref={parallaxRef}>Hello, world!</div>;
+ * ```
+ */
 const useParallax = (data: Parallax) => {
   const { parallaxRef, parentRef, desktop, tablet, mobile, topOfPage = false } = data;
 
