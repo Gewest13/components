@@ -170,6 +170,8 @@ export interface EmailBody {
     content: string; // Content for data retrieval
   };
 
+  sender: string; // Email address of confirmation email sender
+
   senderEnvelope: string; // Email address of form submitter
 
   /** Details for the confirmation email */
@@ -241,6 +243,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     dataReceiver,
     confirmation,
     senderEnvelope,
+    sender,
   } = body as EmailBody;
 
   const cookieStore = cookies();
@@ -390,7 +393,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   };
 
   const clientData = {
-    from: SENDER_MAIL_USERNAME,
+    from: sender,
     to: mail.email,
     subject: messageSubject,
     text: message,
@@ -441,6 +444,7 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
     transporter: {
       id,
     },
+    sender: email_receiver,
     senderEnvelope: "{{firstname}} {{lastname}} <{{email}}>",
     confirmation: {
       subject: 'Test',

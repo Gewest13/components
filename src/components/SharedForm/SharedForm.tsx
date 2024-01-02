@@ -25,14 +25,17 @@ export interface ISharedFormProps {
   dataReceiverPreviewText?: string
   // ** This should be a string since their is no template option for the data receiver */
   dataReceiverEmail: string
+  // ** The email of the sender */
+  mailSender: string
   // ** A list of SMTP account ids to send the data receiver email to */
   mailReceiver: {
-    databaseId: (number | string)
+    email: string
   }[]
   // ** The database ID of the mail sender */
-  mailSender: {
+  mailTransport: {
     databaseId: (number | string)
   }
+  senderEnvelope: string
   // ** The recaptcha site key */
   recaptcha_site_key: string
 
@@ -56,7 +59,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
     // Get the translation key
     setTranslationKey,
     // Props
-    debug, recaptcha_site_key, mailSender, mailReceiver, confirmationSubject, confirmationPreviewText, confirmationEmail, dataReceiverEmail, dataReceiverSubject: dataReceiverSubject, dataReceiverPreviewText,
+    debug, recaptcha_site_key, mailSender, mailTransport, senderEnvelope, mailReceiver, confirmationSubject, confirmationPreviewText, confirmationEmail, dataReceiverEmail, dataReceiverSubject: dataReceiverSubject, dataReceiverPreviewText,
     // HTML Props and Container
     Container = 'div', ...rest
   } = props;
@@ -90,18 +93,18 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & React.HT
         subject: confirmationSubject!,
         previewText: confirmationPreviewText!,
         content: confirmationEmail,
-        // Deprecated
-        // emailTemplate: confirmationEmailTemplate.toString(),
       },
       dataReceiver: {
-        id: mailReceiver.map(({ databaseId }) => databaseId),
+        usernames: mailReceiver.map(({ email }) => email),
         subject: dataReceiverSubject!,
         previewText: dataReceiverPreviewText!,
         content: dataReceiverEmail,
       },
-      sender: {
-        id: mailSender.databaseId,
-      }
+      transporter: {
+        id: mailTransport.databaseId,
+      },
+      senderEnvelope,
+      sender: mailSender
     }
 
     if (debug) console.log('EmailBody: ', body);
