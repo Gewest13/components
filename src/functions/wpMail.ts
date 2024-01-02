@@ -158,17 +158,19 @@ export interface EmailBody {
   mail: { [key: string]: string };
 
   /** Information about the sender */
-  sender: {
+  transporter: {
     id: string | number; // Unique identifier for the sender
   };
 
   /** Extra confirmation data for the client */
   dataReceiver: {
-    id: (string | number)[]; // Array of unique identifiers for data retrieval
+    usernames: string[]; // Array of unique identifiers for data retrieval
     subject: string; // Subject for data retrieval
     previewText: string; // Preview text for data retrieval
     content: string; // Content for data retrieval
   };
+
+  senderEnvelope: string; // Email address of form submitter
 
   /** Details for the confirmation email */
   confirmation?: {
@@ -235,9 +237,10 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     mail,
     recaptcha,
     secretKey,
-    sender,
+    transporter,
     dataReceiver,
     confirmation,
+    senderEnvelope,
   } = body as EmailBody;
 
   const cookieStore = cookies();
@@ -300,20 +303,20 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   }
 
   // Important otherwise no mail will be sent
-  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(sender.id));
+  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(transporter.id));
 
   // Important otherwise the mail receiver will not get any emails
   // We will use filter here since more than one mail receiver can be used
-  const getSmtpAccountMailReceiver = privateSettings.smtp.smtpAccounts.filter(({ smtpAccount }) => dataReceiver.id.map((id) => String(id)).includes(String(smtpAccount.databaseId)));
+  const getSmtpAccountMailReceiver = dataReceiver.usernames;
 
   if (!getSmtpAccountMailSender) {
-    return NextResponse.json({ message: `SMTP account mail receiver not found. Check under SMTP accounts if a post with ${sender.id} ID exist.` }, { status: 500 });
+    return NextResponse.json({ message: `SMTP account mail receiver not found. Check under SMTP accounts if a post with ${transporter.id} ID exist.` }, { status: 500 });
   }
 
   if (!getSmtpAccountMailReceiver.length) {
     return NextResponse.json({
       translationKey: 'noReceiver',
-      message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataReceiver.id[0]} ID exist.`
+      message: `SMTP account mail sender not found. Check under SMTP accounts if a post with ${dataReceiver.usernames[0]} ID exist.`
     } as wpMailResponse,
     { status: 500 });
   }
@@ -334,7 +337,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   if (!SENDER_MAIL_PASSWORD || !SENDER_MAIL_PORT || !SENDER_MAIL_SERVER || !SENDER_MAIL_USERNAME) {
     return NextResponse.json({
       translationKey: 'noSender',
-      message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${sender.id}`,
+      message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${transporter.id}`,
     } as wpMailResponse,
     { status: 500 });
   }
@@ -380,8 +383,8 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   if (debug) console.log('getSmtpAccountMailReceiver', getSmtpAccountMailReceiver);
 
   const mailData = {
-    from: SENDER_MAIL_USERNAME,
-    to: getSmtpAccountMailReceiver!.map(({ smtpAccount }) => smtpAccount.acfSmtp.username),
+    from: senderEnvelope,
+    to: getSmtpAccountMailReceiver,
     subject: messageRecipientSubject,
     html: messageRecipient,
   };
@@ -435,16 +438,17 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
       firstName: 'Test',
       lastName: 'Test',
     },
-    sender: {
+    transporter: {
       id,
     },
+    senderEnvelope: "{{firstname}} {{lastname}} <{{email}}>",
     confirmation: {
       subject: 'Test',
       previewText: 'Test',
       content: content || 'Test',
     },
     dataReceiver: {
-      id: [id],
+      usernames: [email_receiver],
       subject: 'Test',
       previewText: 'Test',
       content: content || 'Test',
