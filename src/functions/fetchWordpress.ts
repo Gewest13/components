@@ -8,13 +8,9 @@ export type FetchWordpress = {
   noGetRequest?: boolean;
   debug?: boolean;
   performanceLog?: boolean;
-  revalidateTag?: string;
+  revalidateTag?: any;
   disableError?: boolean;
-  variables?: {
-    [key: string]: string | {
-      [key: string]: string;
-    }
-  };
+  variables?: any;
 };
 
 export const fetchWordpress = async ({ api_url, query, variables, token, noGetRequest, debug, performanceLog , revalidateTag, disableError }: FetchWordpress) => {

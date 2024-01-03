@@ -125,7 +125,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & ISharedF
         content: dataReceiverEmail,
       },
       transporter: {
-        id: mailTransport.databaseId,
+        databaseId: mailTransport.databaseId,
       },
       senderEnvelope,
       sender: mailSender

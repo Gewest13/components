@@ -159,7 +159,7 @@ export interface EmailBody {
 
   /** Information about the sender */
   transporter: {
-    id: string | number; // Unique identifier for the sender
+    databaseId: string | number; // Unique identifier for the sender
   };
 
   /** Extra confirmation data for the client */
@@ -306,14 +306,14 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   }
 
   // Important otherwise no mail will be sent
-  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(transporter.id));
+  const getSmtpAccountMailSender = privateSettings.smtp.smtpAccounts.find(({ smtpAccount }) => String(smtpAccount.databaseId) === String(transporter.databaseId));
 
   // Important otherwise the mail receiver will not get any emails
   // We will use filter here since more than one mail receiver can be used
   const getSmtpAccountMailReceiver = dataReceiver.usernames;
 
   if (!getSmtpAccountMailSender) {
-    return NextResponse.json({ message: `SMTP account mail receiver not found. Check under SMTP accounts if a post with ${transporter.id} ID exist.` }, { status: 500 });
+    return NextResponse.json({ message: `SMTP account mail receiver not found. Check under SMTP accounts if a post with ${transporter.databaseId} ID exist.` }, { status: 500 });
   }
 
   if (!getSmtpAccountMailReceiver.length) {
@@ -340,7 +340,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   if (!SENDER_MAIL_PASSWORD || !SENDER_MAIL_PORT || !SENDER_MAIL_SERVER || !SENDER_MAIL_USERNAME) {
     return NextResponse.json({
       translationKey: 'noSender',
-      message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${transporter.id}`,
+      message: `Missing SMTP account mail sender data. Please check if all fields are filled out on post type: ${transporter.databaseId}`,
     } as wpMailResponse,
     { status: 500 });
   }
@@ -431,7 +431,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
 export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_username }: propsPostWpMail & { req: Request }) => {
   const { searchParams } = new URL(req.url);
-  const { id, email_receiver, secretKey, content } = Object.fromEntries(searchParams);
+  const { databaseId, email_receiver, secretKey, content } = Object.fromEntries(searchParams);
 
   const body: EmailBody = {
     mail: {
@@ -442,10 +442,10 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
       lastName: 'Test',
     },
     transporter: {
-      id,
+      databaseId,
     },
     sender: email_receiver,
-    senderEnvelope: "{{firstname}} {{lastname}} <{{email}}>",
+    senderEnvelope: "{{firstName}} {{lastName}} <{{email}}>",
     confirmation: {
       subject: 'Test',
       previewText: 'Test',
