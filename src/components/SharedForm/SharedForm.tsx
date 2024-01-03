@@ -32,6 +32,14 @@ export interface ISharedFormWordpressData {
   }
   // ** The sender envelope */
   senderEnvelope: string
+
+  // ** The recaptcha site key */
+  recaptcha_site_key: string
+}
+
+export interface IAcfFormData extends ISharedFormWordpressData {
+  form: any[]
+  buttonText: string
 }
 
 export interface ISharedFormProps {
@@ -40,9 +48,6 @@ export interface ISharedFormProps {
 
   // ** The children of the form */
   children?: React.ReactNode
-
-  // ** The recaptcha site key */
-  recaptcha_site_key: string
 
   // ** Form event handlers inside the handle submit */
   onSubmit?: (e: React.FormEvent, formData: { [key: string]: string }) => void
