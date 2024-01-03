@@ -11,7 +11,10 @@ export interface ISharedFormWordpressData {
   // ** Confirmation preview text */
   confirmationPreviewText?: string
   // ** This could be anything (object array string). Based off if their is a confirmationEmailTemplate */
-  confirmationEmail: string
+  confirmationEmail: {
+    html: string
+    plainText: string
+  }
   // ** This should be a react email template we should pass this since we want to render the confirmation email template on the server to save extra kb's on client side */
   // confirmationEmailTemplate?: any
   // ** Subject for the data receiver */
@@ -116,7 +119,8 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & ISharedF
       confirmation: {
         subject: confirmationSubject!,
         previewText: confirmationPreviewText!,
-        content: confirmationEmail,
+        plainText: confirmationEmail.plainText,
+        html: confirmationEmail.html,
       },
       dataReceiver: {
         usernames: mailReceiver.map(({ email }) => email),

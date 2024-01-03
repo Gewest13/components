@@ -178,7 +178,8 @@ export interface EmailBody {
   confirmation?: {
     subject?: string; // Subject for the confirmation email
     previewText?: string; // Preview text for the confirmation email
-    content?: string; // Content for the confirmation email
+    html?: string; // Content for the confirmation email
+    plainText?: string; // Content for the confirmation email
     // Deprecated, please render emailTemplate on the server side on the project it self. This will safe a render each time a mail is sent.
     // This approach is more sustainable and will save resources for the client and the server. 🌱
     // Send the emailTemplate as content
@@ -370,20 +371,53 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   }
 
   let messageSubject = '';
-  let message = '';
+  let confirmationHtml = '';
+  let confirmationPlainText = '';
 
   if (confirmation?.subject) {
-    messageSubject = Handlebars.compile(confirmation.subject)(mail);
+    try {
+      messageSubject = Handlebars.compile(confirmation.subject)(mail);
+    } catch (error) {
+      messageSubject = 'Something went wrong with the Handlebar variables: ' + confirmation.subject;
+    }
   }
 
-  if (confirmation?.content) {
-    message = Handlebars.compile(confirmation.content)(mail);
+  if (confirmation?.html) {
+    try {
+      confirmationHtml = Handlebars.compile(confirmation.html)(mail);
+    } catch (error) {
+      confirmationHtml = 'Something went wrong with the Handlebar variables: ' + confirmation.html;
+    }
   }
 
-  const messageRecipientSubject = dataReceiver.subject.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
-  const messageRecipient = dataReceiver.content.replace(/{{(.+?)}}/g, (_match, p1) => mail[p1]);
+  if (confirmation?.plainText) {
+    try {
+      confirmationPlainText = Handlebars.compile(confirmation.plainText)(mail);
+    } catch (error) {
+      confirmationPlainText = 'Something went wrong with the Handlebar variables: ' + confirmation.plainText;
+    }
+  }
 
   if (debug) console.log('getSmtpAccountMailReceiver', getSmtpAccountMailReceiver);
+
+  let messageRecipientSubject = '';
+  let messageRecipient = '';
+
+  if (dataReceiver.subject) {
+    try {
+      messageRecipientSubject = Handlebars.compile(dataReceiver.subject)(mail);
+    } catch (error) {
+      messageRecipientSubject = 'Something went wrong with the Handlebar variables: ' + dataReceiver.subject;
+    }
+  }
+
+  if (dataReceiver.content) {
+    try {
+      messageRecipient = Handlebars.compile(dataReceiver.content)(mail);
+    } catch (error) {
+      messageRecipient = 'Something went wrong with the Handlebar variables: ' + dataReceiver.content;
+    }
+  }
 
   const mailData = {
     from: senderEnvelope,
@@ -396,13 +430,13 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     from: sender,
     to: mail.email,
     subject: messageSubject,
-    text: message,
-    html: message,
+    text: confirmationPlainText,
+    html: confirmationHtml,
   };
 
   try {
     // First send mail to receiver
-    if (message.length && mail.email) await sendNodeMailer(transport, clientData);
+    if (confirmationHtml.length && confirmationPlainText.length && mail.email) await sendNodeMailer(transport, clientData);
     // Then send mail to sender
     await sendNodeMailer(transport, mailData);
 
@@ -449,7 +483,8 @@ export const testWpMail = async ({ api_url, req, wordpress_password, wordpress_u
     confirmation: {
       subject: 'Test',
       previewText: 'Test',
-      content: content || 'Test',
+      html: content || 'Test',
+      plainText: content || 'Test',
     },
     dataReceiver: {
       usernames: [email_receiver],
