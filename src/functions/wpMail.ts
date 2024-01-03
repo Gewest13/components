@@ -419,8 +419,18 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     }
   }
 
+  let handlebarsSenderEnvelope = '';
+
+  if (senderEnvelope) {
+    try {
+      handlebarsSenderEnvelope = Handlebars.compile(senderEnvelope)(mail);
+    } catch (error) {
+      handlebarsSenderEnvelope = 'Something went wrong with the Handlebar variables: ' + senderEnvelope;
+    }
+  }
+
   const mailData = {
-    from: senderEnvelope,
+    from: handlebarsSenderEnvelope,
     to: getSmtpAccountMailReceiver,
     subject: messageRecipientSubject,
     html: messageRecipient,
