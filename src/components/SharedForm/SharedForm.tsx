@@ -146,7 +146,7 @@ export const SharedForm = forwardRef<HTMLDivElement, ISharedFormProps & ISharedF
 
     const json = await response.json() as wpMailResponse;
 
-    setTranslationKey && setTranslationKey(json.message as wpMailResponse['translationKey']);
+    setTranslationKey && setTranslationKey(json.translationKey as wpMailResponse['translationKey']);
 
     if (response.status === 200) {
       onSuccessfulSubmit && onSuccessfulSubmit(response);
