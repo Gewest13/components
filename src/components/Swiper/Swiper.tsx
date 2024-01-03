@@ -31,6 +31,7 @@ export interface ISwiper {
 export type SwiperImperativeHandle = {
   containerRef: HTMLDivElement;
   swiperRef: HTMLDivElement;
+  handleClick: (dir: 'prev' | 'next') => void;
 }
 
 export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) => {
@@ -43,6 +44,7 @@ export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) =
   useImperativeHandle(ref, () => ({
     containerRef: containerRef.current,
     swiperRef: swiperRef.current,
+    handleClick: handleClick,
   }), []);
 
   // Hook to get window size
@@ -122,7 +124,6 @@ export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) =
 
       swiperRef.current.style.transform = `translate3d(${state.lastX}px, 0, 0)`;
 
-      // Calculate the percentage of the swiper's position from 0 to 1 round to 2 decimal places
       state.percentage = Math.abs(state.lastX) / state.max;
 
       const closest = state.offsetSlides.reduce((prev, curr) => (Math.abs(curr - Math.abs(state.currentX)) < Math.abs(prev - Math.abs(state.currentX)) ? curr : prev));
@@ -217,6 +218,23 @@ export const Swiper = forwardRef<SwiperImperativeHandle, ISwiper>((props, ref) =
     state.currentX = state.offX + (clientX - state.onX) * state.speed;
 
     clamp();
+  };
+
+  const handleClick = (dir: 'prev' | 'next') => {
+    if (state.currentX === 0 && dir === 'prev') return;
+
+    if (state.stopTicker) {
+      state.stopTicker = false;
+      startTicker();
+    }
+
+    const slideWidth = swiperRef.current!.children[0].clientWidth;
+
+    state.currentX += dir === 'prev' ? slideWidth : -slideWidth;
+
+    state.offX = state.currentX;
+
+    snapSlides();
   };
 
   return (
