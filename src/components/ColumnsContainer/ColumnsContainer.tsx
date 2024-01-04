@@ -83,7 +83,7 @@ export const ColumnsContainer = forwardRef<HTMLDivElement, IColumnsContainerProp
 
   return (
     <CreatedContainer ref={ref} {...rest}>
-      {columns.map((column, index) => {
+      {columns.filter(column => column.component).map((column, index) => {
         return (
           <div style={cssColumRowVars(column.grids)} className={`${oneRow ? styles.oneRow : ''} ${column.className || ''}`} data-grid={true} key={index}>
             {column.component}
