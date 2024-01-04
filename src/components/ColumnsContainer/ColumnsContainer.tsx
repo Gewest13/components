@@ -33,7 +33,7 @@ export interface IColumnsContainerProps {
   columns: {
     /**
      * @example
-     * { desktop: { column: '1 / -1', row: '1 / 2' },  tablet: {}, mobile: { column: '1 / 4' } }
+     * { desktop: { column: '1 / -1', row: '1 / 2', alignSelf: 'center' },  tablet: {}, mobile: { column: '1 / 4' } }
      */
     grids: ColumnGrid;
     /**

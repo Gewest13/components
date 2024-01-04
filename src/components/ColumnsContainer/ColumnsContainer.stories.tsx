@@ -31,7 +31,7 @@ const Template: StoryFn<typeof ColumnsContainer> = ({ ...rest }) => {
       Container={<div />}
       columns={[
         {
-          grids: { desktop: { column: '1 / -1', row: '1 / 2' }, mobile: { column: '1 / -1', row: '1 / 2' } },
+          grids: { desktop: { column: '1 / -1', row: '1 / 2', alignSelf: 'center' }, mobile: { column: '1 / -1', row: '1 / 2' } },
           component: <div ref={parentRef} style={{ height: '600px', marginTop: '100vh', backgroundColor: 'red' }}>
             <h1 ref={ref} >Column 1</h1>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias enim odit dolorem ipsum, laudantium officia quam quibusdam voluptatum dolore fuga aliquam? Consectetur, cum. Ea ut dolore obcaecati iusto et velit!</p>

@@ -37,19 +37,16 @@ export interface Grids {
   desktop?: string;
 }
 
+export interface Grid {
+  column: string;
+  row?: string;
+  alignSelf?: 'flex-start' | 'flex-end' | 'center';
+}
+
 export type ColumnGrid = {
-  desktop: {
-    column: string;
-    row?: string;
-  }
-  tablet?: {
-    column: string;
-    row?: string;
-  },
-  mobile: {
-    column: string;
-    row?: string;
-  },
+  desktop: Grid
+  tablet?: Grid
+  mobile: Grid
 };
 
 export interface FileSource {

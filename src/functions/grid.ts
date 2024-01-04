@@ -19,6 +19,7 @@ export const cssColumRowVars = (grid?: ColumnGrid): LenientCSSProperties | undef
     if (deviceGrid) {
       acc[`--column-${device}`] = deviceGrid.column;
       acc[`--row-${device}`] = deviceGrid.row;
+      acc[`--align-self-${device}`] = deviceGrid.alignSelf;
     }
     return acc;
   }, {});
