@@ -251,7 +251,7 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
   } = body as EmailBody;
 
   if (confirmation?.plainText?.length && confirmation.html?.length) {
-    if (isEmail(mail.email)) {
+    if (!isEmail(mail.email)) {
       return NextResponse.json({
         translationKey: 'invalidEmail',
         message: 'The email is invalid.',
