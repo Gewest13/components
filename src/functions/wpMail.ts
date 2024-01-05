@@ -4,6 +4,7 @@ import Handlebars  from 'handlebars';
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import nodemailer from 'nodemailer';
+import isEmail from 'validator/es/lib/isEmail';
 
 import { fetchWordpress } from "./fetchWordpress";
 
@@ -136,6 +137,8 @@ interface propsPrivateSettings {
 export interface wpMailResponse {
   translationKey:
   'success' |
+  'sending' |
+  'invalidEmail' |
   'error' |
   'unauthorized' |
   'noPrivateSettings' |
@@ -246,6 +249,16 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
     senderEnvelope,
     sender,
   } = body as EmailBody;
+
+  if (confirmation?.plainText?.length && confirmation.html?.length) {
+    if (isEmail(mail.email)) {
+      return NextResponse.json({
+        translationKey: 'invalidEmail',
+        message: 'The email is invalid.',
+      } as wpMailResponse,
+      { status: 500 });
+    }
+  }
 
   const cookieStore = cookies();
 
@@ -446,7 +459,9 @@ export const postWpMail = async ({ api_url, req, wordpress_username, wordpress_p
 
   try {
     // First send mail to receiver
-    if (confirmationHtml.length && confirmationPlainText.length && mail.email) await sendNodeMailer(transport, clientData);
+    if (confirmationHtml.length && confirmationPlainText.length && mail.email) {
+      await sendNodeMailer(transport, clientData)
+    }
     // Then send mail to sender
     await sendNodeMailer(transport, mailData);
 
