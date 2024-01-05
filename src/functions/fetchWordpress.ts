@@ -1,19 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 
-export type FetchWordpress = {
+export interface IFetchWordpress {
   api_url: string;
+}
+
+export interface IFetchWordpressShared {
   query: string;
-  token?: string;
-  noGetRequest?: boolean;
   debug?: boolean;
   performanceLog?: boolean;
   revalidateTag?: any;
   disableError?: boolean;
   variables?: any;
-};
+  token?: string;
+  noGetRequest?: boolean;
+}
 
-export const fetchWordpress = async ({ api_url, query, variables, token, noGetRequest, debug, performanceLog , revalidateTag, disableError }: FetchWordpress) => {
+export const fetchWordpress = async ({ api_url, query, variables, token, noGetRequest, debug, performanceLog , revalidateTag, disableError }: IFetchWordpress & IFetchWordpressShared) => {
   const headers: any = {
     'Content-Type': 'application/json',
   };
